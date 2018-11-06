@@ -14,10 +14,10 @@
             <property name="mappers" value="com.dinry.clouddisk.config.MyMapper"/>
         </plugin>
 
-        <jdbcConnection driverClass="${spring.datasource.driver-class-name}"
-                        connectionURL="${spring.datasource.url}"
-                        userId="${spring.datasource.username}"
-                        password="${spring.datasource.password}">
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/clouddisk"
+                        userId="root"
+                        password="123456">
         </jdbcConnection>
 
         <javaModelGenerator targetPackage="com.dinry.clouddisk.model" targetProject="src/main/java"/>
