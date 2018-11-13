@@ -28,8 +28,8 @@ public class Uploader {
     /**
      * 最大文件大小
      */
-    @Value("${maxfilesize}")
-    private Integer maxFileSize;
+//    @Value("${maxfilesize}")
+    private Integer maxFileSize = Integer.MAX_VALUE;
 
 //    public Uploader(String temporaryFolder, Integer maxFileSize) {
 //        this.temporaryFolder = temporaryFolder;
@@ -42,7 +42,8 @@ public class Uploader {
 //    }
 
     private String cleanIdentifier(String identifier) {
-        return identifier.replaceAll("[^0-9A-Za-z_-]", "");
+//        return identifier.replaceAll("[^0-9A-Za-z_-]", "");
+        return identifier;
     }
 
     private String getChunkFilename(int chunkNumber, String identifier) {
@@ -173,7 +174,7 @@ public class Uploader {
             throws IOException {
         String chunkFilename = getChunkFilename(number, identifier);
         if (new File(chunkFilename).exists()) {
-            int maxlen = 1024;
+            int maxlen = 4096;
             int len = 0;
             try (FileInputStream inputStream = new FileInputStream(new File(chunkFilename))) {
                 byte[] buff = new byte[maxlen];
@@ -226,8 +227,8 @@ public class Uploader {
                         File f = new File(this.diskFolder,
                                 identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(original_filename));
                         //TODO: 保存路径至数据库
-                        md5 = DigestUtils.md5DigestAsHex(new FileInputStream(f));
-                        System.out.println(md5);
+                        //md5 = DigestUtils.md5DigestAsHex(new FileInputStream(f));
+                        //System.out.println(md5);
                         options.listener = new UploadDoneListener() {
                             @Override
                             public void onError(Exception err) {
