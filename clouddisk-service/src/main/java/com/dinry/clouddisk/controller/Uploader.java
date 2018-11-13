@@ -2,14 +2,17 @@ package com.dinry.clouddisk.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.tomcat.jni.FileInfo;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 //https://github.com/simple-uploader/Uploader/blob/develop/samples/Node.js/uploader-node.js
@@ -29,7 +32,7 @@ public class Uploader {
      * 最大文件大小
      */
 //    @Value("${maxfilesize}")
-    private Integer maxFileSize = Integer.MAX_VALUE;
+    private Long maxFileSize = Long.MAX_VALUE;
 
 //    public Uploader(String temporaryFolder, Integer maxFileSize) {
 //        this.temporaryFolder = temporaryFolder;
@@ -41,18 +44,17 @@ public class Uploader {
 //
 //    }
 
-    private String cleanIdentifier(String identifier) {
+//    private String cleanIdentifier(String identifier) {
 //        return identifier.replaceAll("[^0-9A-Za-z_-]", "");
-        return identifier;
-    }
+//    }
 
     private String getChunkFilename(int chunkNumber, String identifier) {
-        identifier = cleanIdentifier(identifier);
+//        identifier = cleanIdentifier(identifier);
         return new File(temporaryFolder, "uploader-" + identifier + '.' + chunkNumber).getAbsolutePath();
     }
 
-    private String validateRequest(int chunkNumber, int chunkSize, int totalSize, String identifier, String filename, Integer fileSize) {
-        identifier = cleanIdentifier(identifier);
+    private String validateRequest(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, Integer fileSize) {
+//        identifier = cleanIdentifier(identifier);
 
         if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0 || identifier.length() == 0 || filename.length() == 0) {
             return "non_uploader_request";
@@ -91,6 +93,15 @@ public class Uploader {
         return def;
     }
 
+    private long getParamLong(HttpServletRequest req, String key, int def) {
+        String value = req.getParameter(key);
+        try {
+            return Long.parseLong(value);
+        } catch (Exception e) {
+        }
+        return def;
+    }
+
     private String getParamString(HttpServletRequest req, String key, String def) {
         String value = req.getParameter(key);
         try {
@@ -102,8 +113,8 @@ public class Uploader {
 
     public void get(HttpServletRequest req, UploadListener listener) {
         int chunkNumber = this.getParamInt(req, "chunkNumber", 0);
-        int chunkSize = this.getParamInt(req, "chunkSize", 0);
-        int totalSize = this.getParamInt(req, "totalSize", 0);
+        long chunkSize = this.getParamLong(req, "chunkSize", 0);
+        long totalSize = this.getParamLong(req, "totalSize", 0);
         String identifier = this.getParamString(req, "identifier", "");
         String filename = this.getParamString(req, "filename", "");
         if (validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename, null).equals("valid")) {
@@ -120,8 +131,8 @@ public class Uploader {
 
     public void post(HttpServletRequest req, UploadListener listener) {
         int chunkNumber = this.getParamInt(req, "chunkNumber", 0);
-        int chunkSize = this.getParamInt(req, "chunkSize", 0);
-        int totalSize = this.getParamInt(req, "totalSize", 0);
+        long chunkSize = this.getParamLong(req, "chunkSize", 0);
+        long totalSize = this.getParamLong(req, "totalSize", 0);
         String identifier = this.getParamString(req, "identifier", "");
         String filename = this.getParamString(req, "filename", "");
 
@@ -170,26 +181,26 @@ public class Uploader {
         }
     }
 
-    private void pipeChunk(int number, String identifier, UploadOptions options, OutputStream writableStream)
-            throws IOException {
-        String chunkFilename = getChunkFilename(number, identifier);
-        if (new File(chunkFilename).exists()) {
-            int maxlen = 4096;
-            int len = 0;
-            try (FileInputStream inputStream = new FileInputStream(new File(chunkFilename))) {
-                byte[] buff = new byte[maxlen];
-                while ((len = inputStream.read(buff, 0, maxlen)) > 0) {
-                    writableStream.write(buff, 0, len);
-                }
-            }
-            pipeChunk(number + 1, identifier, options, writableStream);
-        } else {
-            if (options.end)
-                writableStream.close();
-            if (options.listener != null)
-                options.listener.onDone();
-        }
-    }
+//    private void pipeChunk(int number, String identifier, UploadOptions options, OutputStream writableStream)
+//            throws IOException {
+//        String chunkFilename = getChunkFilename(number, identifier);
+//        if (new File(chunkFilename).exists()) {
+//            int maxlen = 4096;
+//            int len = 0;
+//            try (FileInputStream inputStream = new FileInputStream(new File(chunkFilename))) {
+//                byte[] buff = new byte[maxlen];
+//                while ((len = inputStream.read(buff, 0, maxlen)) > 0) {
+//                    writableStream.write(buff, 0, len);
+//                }
+//            }
+//            pipeChunk(number + 1, identifier, options, writableStream);
+//        } else {
+//            if (options.end)
+//                writableStream.close();
+//            if (options.listener != null)
+//                options.listener.onDone();
+//        }
+//    }
 
     private void write(String identifier, OutputStream writableStream, UploadOptions options) throws IOException {
         if (options == null) {
@@ -236,12 +247,11 @@ public class Uploader {
      */
     private int testChunkExists(int currentTestChunk, int chunkNumber, int numberOfChunks, String filename,
                                 String original_filename, String identifier, UploadListener listener, String fileType) {
-        String md5;
         String cfile = getChunkFilename(currentTestChunk, identifier);
-        if (new File(cfile).exists()) {
+        if (Files.exists(Paths.get(cfile))) {
             currentTestChunk++;
             if (currentTestChunk >= chunkNumber) {
-                if (chunkNumber == numberOfChunks)
+                if (chunkNumber == numberOfChunks) {
                     try {
                         System.out.println("done");
                         // 文件合并
@@ -270,7 +280,7 @@ public class Uploader {
                         listener.callback("invalid_uploader_request", filename, original_filename, identifier,
                                 fileType);
                     }
-                else {
+                } else {
                     listener.callback("partly_done", filename, original_filename, identifier, fileType);
                 }
             } else {
