@@ -23,8 +23,8 @@ public class UploadController {
     @Autowired
     private UploadService uploadService;
 
-    @RequestMapping(path = "/upload", method = RequestMethod.POST)
-    public void upload(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(path = "/upload", method = {RequestMethod.POST})
+    public void uploadPost(HttpServletRequest request, HttpServletResponse response) {
         try {
             uploadService.post(request, new Uploader.UploadListener() {
                 @Override
@@ -37,6 +37,11 @@ public class UploadController {
                 private void sucess(HttpServletResponse response, String status) {
                     PrintWriter writer;
                     try {
+                        if (status.equals("partly_done") || status.equals("done")) {
+                            response.setStatus(200);
+                        } else {
+                            response.setStatus(500);
+                        }
                         writer = response.getWriter();
                         writer.write(status);
                     } catch (Exception e) {
@@ -49,5 +54,36 @@ public class UploadController {
         }
     }
 
+    @RequestMapping(path = "/upload", method = {RequestMethod.GET})
+    public void uploadGet(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            uploadService.get(request, new Uploader.UploadListener() {
+                @Override
+                public void callback(String status, String filename, String original_filename, String identifier, String fileType) {
+                    if (status != null) {
+                        this.sucess(response, status);
+                    }
+                }
+
+                private void sucess(HttpServletResponse response, String status) {
+                    PrintWriter writer;
+                    try {
+                        if (status.equals("found")) {
+                            response.setStatus(200);
+                        } else {
+                            //本地没有块文件
+                            response.setStatus(204);
+                        }
+                        writer = response.getWriter();
+                        writer.write(status);
+                    } catch (Exception e) {
+                        log.error("文件上传失败，原因：" + e.toString());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            log.error("文件上传失败，原因：" + e.toString());
+        }
+    }
 
 }

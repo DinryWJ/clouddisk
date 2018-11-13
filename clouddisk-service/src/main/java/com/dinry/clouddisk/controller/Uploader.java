@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,12 +12,18 @@ import java.io.*;
 import java.util.Iterator;
 
 //https://github.com/simple-uploader/Uploader/blob/develop/samples/Node.js/uploader-node.js
+@Slf4j
 public class Uploader {
     /**
      * 临时文件夹
      */
     @Value("${temporaryfolder}")
     private String temporaryFolder;
+    /**
+     * 存储文件夹
+     */
+    @Value("${diskfolder}")
+    private String diskFolder;
     /**
      * 最大文件大小
      */
@@ -109,7 +116,7 @@ public class Uploader {
         }
     }
 
-    public void post(HttpServletRequest req, UploadListener listener) throws IllegalStateException, IOException {
+    public void post(HttpServletRequest req, UploadListener listener){
         int chunkNumber = this.getParamInt(req, "chunkNumber", 0);
         int chunkSize = this.getParamInt(req, "chunkSize", 0);
         int totalSize = this.getParamInt(req, "totalSize", 0);
@@ -138,7 +145,11 @@ public class Uploader {
 
                         File f = new File(chunkFilename);
                         if (!f.exists()) {
-                            file.transferTo(f);
+                            try {
+                                file.transferTo(f);
+                            } catch (IOException e) {
+                                log.error("上传错误:" + e.toString());
+                            }
                         }
 
                         int currentTestChunk = 1;
@@ -209,7 +220,7 @@ public class Uploader {
                     System.out.println("done");
                     // 文件合并
                     UploadOptions options = new UploadOptions();
-                    File f = new File(this.temporaryFolder,
+                    File f = new File(this.diskFolder,
                             identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(original_filename));
                     options.listener = new UploadDoneListener() {
                         @Override
