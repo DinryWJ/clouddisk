@@ -3,6 +3,7 @@ package com.dinry.clouddisk.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -116,7 +117,7 @@ public class Uploader {
         }
     }
 
-    public void post(HttpServletRequest req, UploadListener listener){
+    public void post(HttpServletRequest req, UploadListener listener) {
         int chunkNumber = this.getParamInt(req, "chunkNumber", 0);
         int chunkSize = this.getParamInt(req, "chunkSize", 0);
         int totalSize = this.getParamInt(req, "totalSize", 0);
@@ -212,35 +213,40 @@ public class Uploader {
      */
     private int testChunkExists(int currentTestChunk, int chunkNumber, int numberOfChunks, String filename,
                                 String original_filename, String identifier, UploadListener listener, String fileType) {
+        String md5;
         String cfile = getChunkFilename(currentTestChunk, identifier);
         if (new File(cfile).exists()) {
             currentTestChunk++;
             if (currentTestChunk >= chunkNumber) {
-                if (chunkNumber == numberOfChunks) try {
-                    System.out.println("done");
-                    // 文件合并
-                    UploadOptions options = new UploadOptions();
-                    File f = new File(this.diskFolder,
-                            identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(original_filename));
-                    options.listener = new UploadDoneListener() {
-                        @Override
-                        public void onError(Exception err) {
-                            listener.callback("invalid_uploader_request", f.getAbsolutePath(), original_filename, identifier, fileType);
-                            clean(identifier, null);
-                        }
+                if (chunkNumber == numberOfChunks)
+                    try {
+                        System.out.println("done");
+                        // 文件合并
+                        UploadOptions options = new UploadOptions();
+                        File f = new File(this.diskFolder,
+                                identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(original_filename));
+                        //TODO: 保存路径至数据库
+                        md5 = DigestUtils.md5DigestAsHex(new FileInputStream(f));
+                        System.out.println(md5);
+                        options.listener = new UploadDoneListener() {
+                            @Override
+                            public void onError(Exception err) {
+                                listener.callback("invalid_uploader_request", f.getAbsolutePath(), original_filename, identifier, fileType);
+                                clean(identifier, null);
+                            }
 
-                        @Override
-                        public void onDone() {
-                            listener.callback("done", f.getAbsolutePath(), original_filename, identifier, fileType);
-                            clean(identifier, null);
-                        }
-                    };
-                    this.write(identifier, new FileOutputStream(f), options);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    listener.callback("invalid_uploader_request", filename, original_filename, identifier,
-                            fileType);
-                }
+                            @Override
+                            public void onDone() {
+                                listener.callback("done", f.getAbsolutePath(), original_filename, identifier, fileType);
+                                clean(identifier, null);
+                            }
+                        };
+                        this.write(identifier, new FileOutputStream(f), options);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        listener.callback("invalid_uploader_request", filename, original_filename, identifier,
+                                fileType);
+                    }
                 else {
                     listener.callback("partly_done", filename, original_filename, identifier, fileType);
                 }
@@ -286,6 +292,7 @@ public class Uploader {
 
     public interface UploadDoneListener {
         void onDone();
+
         void onError(Exception err);
     }
 
