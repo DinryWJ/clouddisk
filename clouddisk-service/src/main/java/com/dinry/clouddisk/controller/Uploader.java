@@ -198,7 +198,29 @@ public class Uploader {
         if (options.end == null) {
             options.end = true;
         }
-        pipeChunk(1, identifier, options, writableStream);
+        for (int i = 1; ; i++) {
+            String chunkFilename = getChunkFilename(i, identifier);
+            if (new File(chunkFilename).exists()) {
+                int maxlen = 4096;
+                int len = 0;
+                try (FileInputStream inputStream = new FileInputStream(new File(chunkFilename))) {
+                    byte[] buff = new byte[maxlen];
+                    while ((len = inputStream.read(buff, 0, maxlen)) > 0) {
+                        writableStream.write(buff, 0, len);
+                    }
+                }
+            } else {
+                if (options.end) {
+                    writableStream.close();
+                }
+                if (options.listener != null) {
+                    options.listener.onDone();
+                }
+                break;
+            }
+        }
+
+        //pipeChunk(1, identifier, options, writableStream);
     }
 
     /**
