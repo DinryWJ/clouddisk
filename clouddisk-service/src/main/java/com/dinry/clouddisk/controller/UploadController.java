@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.controller;
 
+import ch.qos.logback.core.util.TimeUtil;
 import com.dinry.clouddisk.api.ApiResponse;
 import com.dinry.clouddisk.service.UploadService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,19 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * @Author: 吴佳杰
@@ -49,7 +48,7 @@ public class UploadController {
     @Autowired
     private UploadService uploadService;
 
-    @RequestMapping(path = "/upload", method = {RequestMethod.POST})
+    @PostMapping(path = "/upload")
     public ResponseEntity<ApiResponse> uploadPost(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
         if (file != null && file.getSize() > 0) {
             String originalFilename = file.getOriginalFilename();
@@ -80,8 +79,8 @@ public class UploadController {
         }
     }
 
-    @RequestMapping(path = "/upload", method = {RequestMethod.GET})
-    public ResponseEntity<ApiResponse> uploadGet(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
+    @GetMapping(path = "/upload")
+    public ResponseEntity<ApiResponse> uploadGet(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename) {
         if (validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename, null).equals("valid")) {
             String chunkFilename = getChunkFilename(chunkNumber, identifier);
             if (Files.exists(Paths.get(chunkFilename))) {
@@ -133,7 +132,7 @@ public class UploadController {
                 if (chunkNumber == numberOfChunks) {
                     try {
                         log.info("文件:{}上传成功,开始合并文件", originalFilename);
-                        String path = this.diskFolder + identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(originalFilename);
+                        String path = this.diskFolder + LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")) + "-" + identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(originalFilename);
                         write(identifier, path);
                         log.info("文件合并成功,路径:{}", path);
                         return 200;
