@@ -30,8 +30,8 @@ public class Uploader {
     /**
      * 最大文件大小
      */
-//    @Value("${maxfilesize}")
-    private Long maxFileSize = Long.MAX_VALUE;
+    @Value("${maxfilesize}")
+    private Long maxFileSize;
 
     private String getChunkFilename(int chunkNumber, String identifier) {
         return new File(temporaryFolder, "uploader-" + identifier + '.' + chunkNumber).getAbsolutePath();
