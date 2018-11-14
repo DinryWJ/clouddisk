@@ -9,6 +9,6 @@ package com.dinry.clouddisk.service;
 import com.dinry.clouddisk.controller.Uploader;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("uploadService")
 public class UploadService extends Uploader {
 }

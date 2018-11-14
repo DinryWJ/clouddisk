@@ -8,7 +8,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -151,25 +152,16 @@ public class Uploader {
     }
 
 
-    private void write(String identifier, File file, UploadOptions options) throws IOException {
+    private void write(String identifier, String path, UploadOptions options) throws IOException {
         String chunkFilename;
-        try (OutputStream writableStream = new FileOutputStream(file)) {
-            for (int number = 1; ; number++) {
-                chunkFilename = getChunkFilename(number, identifier);
-                if (Files.exists(Paths.get(chunkFilename))) {
-                    int maxlen = 2048;
-                    int len = 0;
-                    try (FileInputStream inputStream = new FileInputStream(new File(chunkFilename))) {
-                        byte[] buff = new byte[maxlen];
-                        while ((len = inputStream.read(buff, 0, maxlen)) > 0) {
-                            writableStream.write(buff, 0, len);
-                        }
-                    }
-                } else {
-                    options.end = true;
-                    options.listener.onDone();
-                    break;
-                }
+        for (int number = 1; ; number++) {
+            chunkFilename = getChunkFilename(number, identifier);
+            if (Files.exists(Paths.get(chunkFilename))) {
+                Files.write(Paths.get(path), Files.readAllBytes(Paths.get(chunkFilename)));
+            } else {
+                options.end = true;
+                options.listener.onDone();
+                break;
             }
         }
     }
@@ -197,25 +189,21 @@ public class Uploader {
                         try {
                             log.info("文件:{}上传成功,开始合并文件", original_filename);
                             UploadOptions options = new UploadOptions();
-                            File f = new File(this.diskFolder,
-                                    identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(original_filename));
-                            //TODO: 保存路径至数据库
-                            //md5 = DigestUtils.md5DigestAsHex(new FileInputStream(f));
-                            //System.out.println(md5);
+                            String path = this.diskFolder + identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(original_filename);
                             options.listener = new UploadDoneListener() {
                                 @Override
                                 public void onError(Exception err) {
-                                    listener.callback("invalid_uploader_request", f.getAbsolutePath(), original_filename, identifier, fileType);
+                                    listener.callback("invalid_uploader_request", path, original_filename, identifier, fileType);
                                     clean(identifier, null);
                                 }
 
                                 @Override
                                 public void onDone() {
-                                    listener.callback("done", f.getAbsolutePath(), original_filename, identifier, fileType);
+                                    listener.callback("done", path, original_filename, identifier, fileType);
                                     clean(identifier, null);
                                 }
                             };
-                            this.write(identifier, f, options);
+                            this.write(identifier, path, options);
                             log.info("文件合并成功,路径:{}", this.diskFolder +
                                     identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(original_filename));
 
