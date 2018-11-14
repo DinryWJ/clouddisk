@@ -38,7 +38,7 @@ public class ApiResponse implements Serializable {
         res.setReturnCode(returnCode);
         res.setReturnType(returnMsg);
         res.setReturnData(returnData);
-        return new ResponseEntity<ApiResponse>(res, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<ApiResponse>(res, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public static ResponseEntity<ApiResponse> reuploadResponse(int returnCode, String returnMsg, Object returnData) {
@@ -46,7 +46,7 @@ public class ApiResponse implements Serializable {
         res.setReturnCode(returnCode);
         res.setReturnType(returnMsg);
         res.setReturnData(returnData);
-        return new ResponseEntity<ApiResponse>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<ApiResponse>(res, HttpStatus.NO_CONTENT);
     }
 
     public static ResponseEntity<ApiResponse> successResponse(Object returnData) {

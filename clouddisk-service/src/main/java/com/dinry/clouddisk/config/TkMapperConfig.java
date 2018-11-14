@@ -15,7 +15,7 @@ import java.util.Properties;
 public class TkMapperConfig {
 
     @Bean
-    public MapperScannerConfigurer mapperScannerConfigurer(){
+    public static MapperScannerConfigurer mapperScannerConfigurer(){
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setBasePackage("com.dinry.clouddisk.dao");
         Properties propertiesMapper = new Properties();

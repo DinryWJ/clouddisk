@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,9 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
 /**
@@ -47,21 +50,13 @@ public class UploadController {
     private UploadService uploadService;
 
     @RequestMapping(path = "/upload", method = {RequestMethod.POST})
-    public ResponseEntity<ApiResponse> uploadPost(HttpServletRequest request, MultipartFile file) {
-        int chunkNumber = this.getParamInt(request, "chunkNumber", 0);
-        long chunkSize = this.getParamLong(request, "chunkSize", 0);
-        long totalSize = this.getParamLong(request, "totalSize", 0);
-        String identifier = this.getParamString(request, "identifier", "");
-        String filename = this.getParamString(request, "filename", "");
-
+    public ResponseEntity<ApiResponse> uploadPost(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
         if (file != null && file.getSize() > 0) {
-            String original_filename = file.getOriginalFilename();
+            String originalFilename = file.getOriginalFilename();
             String validation = validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename,
                     (int) file.getSize());
-
             if ("valid".equals(validation)) {
                 String chunkFilename = getChunkFilename(chunkNumber, identifier);
-
                 if (!Files.exists(Paths.get(chunkFilename))) {
                     try {
                         file.transferTo(new File(chunkFilename));
@@ -69,13 +64,14 @@ public class UploadController {
                         log.error("上传错误:" + e.toString());
                     }
                 }
-
                 int currentTestChunk = 1;
                 int numberOfChunks = (int) Math.max(Math.floor(totalSize / (chunkSize * 1.0)), 1);
-
                 int code = testChunkExists(currentTestChunk, chunkNumber, numberOfChunks,
-                        chunkFilename, original_filename, identifier, "file");
-
+                        chunkFilename, originalFilename, identifier, "file");
+                if (500 == code) {
+                    return ApiResponse.validResponse("invalid_uploader_request");
+                }
+                return ApiResponse.successResponse(200 == code ? "done" : "party_done");
             } else {
                 return ApiResponse.validResponse(validation);
             }
@@ -85,12 +81,7 @@ public class UploadController {
     }
 
     @RequestMapping(path = "/upload", method = {RequestMethod.GET})
-    public ResponseEntity<ApiResponse> uploadGet(HttpServletRequest request) {
-        int chunkNumber = this.getParamInt(request, "chunkNumber", 0);
-        long chunkSize = this.getParamLong(request, "chunkSize", 0);
-        long totalSize = this.getParamLong(request, "totalSize", 0);
-        String identifier = this.getParamString(request, "identifier", "");
-        String filename = this.getParamString(request, "filename", "");
+    public ResponseEntity<ApiResponse> uploadGet(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
         if (validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename, null).equals("valid")) {
             String chunkFilename = getChunkFilename(chunkNumber, identifier);
             if (Files.exists(Paths.get(chunkFilename))) {
@@ -110,34 +101,39 @@ public class UploadController {
             if (!Files.exists(Paths.get(chunkFilename))) {
                 break;
             }
-            Files.write(Paths.get(path), Files.readAllBytes(Paths.get(chunkFilename)));
+            if (!Files.exists(Paths.get(path))) {
+                Files.write(Paths.get(path), Files.readAllBytes(Paths.get(chunkFilename)), StandardOpenOption.CREATE);
+            } else {
+                Files.write(Paths.get(path), Files.readAllBytes(Paths.get(chunkFilename)), StandardOpenOption.APPEND);
+            }
         }
+        clean(identifier);
     }
 
     /**
-     * @param currentTestChunk
-     * @param chunkNumber       当前上传块
-     * @param numberOfChunks    总块数
-     * @param filename          文件名称
-     * @param original_filename 源文件名称
-     * @param identifier        文件
-     * @param fileType          文件类型
-     * @return
+     * @param currentTestChunk 循环变量
+     * @param chunkNumber      当前上传块
+     * @param numberOfChunks   总块数
+     * @param filename         文件名称
+     * @param originalFilename 源文件名称
+     * @param identifier       文件
+     * @param fileType         文件类型
+     * @return 返回值200: done 201:partly_done 500:something woring
      */
     private int testChunkExists(int currentTestChunk, int chunkNumber, int numberOfChunks, String filename,
-                                String original_filename, String identifier, String fileType) {
+                                String originalFilename, String identifier, String fileType) {
         String cfile;
         while (true) {
             cfile = getChunkFilename(currentTestChunk, identifier);
             if (!Files.exists(Paths.get(cfile))) {
-                return 200;
+                return 201;
             }
             currentTestChunk++;
             if (currentTestChunk >= chunkNumber) {
                 if (chunkNumber == numberOfChunks) {
                     try {
-                        log.info("文件:{}上传成功,开始合并文件", original_filename);
-                        String path = this.diskFolder + identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(original_filename);
+                        log.info("文件:{}上传成功,开始合并文件", originalFilename);
+                        String path = this.diskFolder + identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(originalFilename);
                         write(identifier, path);
                         log.info("文件合并成功,路径:{}", path);
                         return 200;
@@ -146,40 +142,30 @@ public class UploadController {
                         return 500;
                     }
                 } else {
-                    return 200;
+                    return 201;
                 }
             }
         }
-
     }
 
-    private void clean(String identifier, Uploader.UploadOptions options) {
-        if (options == null) {
-            options = new Uploader.UploadOptions();
-        }
-        pipeChunkRm(1, identifier, options);
+    private void clean(String identifier) {
+        pipeChunkRm(identifier);
     }
 
-    private void pipeChunkRm(int number, String identifier, Uploader.UploadOptions options) {
+    private void pipeChunkRm(String identifier) {
+        int number = 1;
         while (true) {
             String chunkFilename = getChunkFilename(number, identifier);
-            if (Files.exists(Paths.get(chunkFilename))) {
-                try {
-                    Files.delete(Paths.get(chunkFilename));
-                } catch (IOException e) {
-                    if (options.listener != null) {
-                        options.listener.onError(e);
-                    }
-                }
-                number++;
-            } else {
-                if (options.listener != null) {
-                    options.listener.onDone();
-                }
+            if (!Files.exists(Paths.get(chunkFilename))) {
                 break;
             }
+            try {
+                Files.delete(Paths.get(chunkFilename));
+            } catch (IOException e) {
+                log.error("文件删除错误:", e);
+            }
+            number++;
         }
-
     }
 
     private String validateRequest(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, Integer fileSize) {
@@ -212,18 +198,9 @@ public class UploadController {
         return new File(temporaryFolder, "uploader-" + identifier + '.' + chunkNumber).getAbsolutePath();
     }
 
-    private int getParamInt(HttpServletRequest req, String key, int def) {
-        String value = req.getParameter(key);
-        return Optional.of(Integer.parseInt(value)).orElse(def);
-    }
-
-    private long getParamLong(HttpServletRequest req, String key, long def) {
-        String value = req.getParameter(key);
-        return Optional.of(Long.parseLong(value)).orElse(def);
-    }
-
-    private String getParamString(HttpServletRequest req, String key, String def) {
-        String value = req.getParameter(key);
-        return Optional.ofNullable(value).orElse(def);
+    public static void main(String[] args) throws IOException {
+        String md = DigestUtils.md5DigestAsHex(new FileInputStream(new File("C:\\下载\\LOL_V4.0.8.2_FULL.7z.004")));
+        String md2 = DigestUtils.md5DigestAsHex(new FileInputStream(new File("E:\\disk\\home\\1992294400-LOL_V4082_FULL7z004.004")));
+        System.out.println(md.equals(md2));
     }
 }
