@@ -45,7 +45,7 @@ public class UploadController {
                         writer = response.getWriter();
                         writer.write(status);
                     } catch (Exception e) {
-                        log.error("文件上传失败，原因：" + e.toString());
+                        log.error("文件上传失败，原因：", e);
                     }
                 }
             });
@@ -77,12 +77,12 @@ public class UploadController {
                         writer = response.getWriter();
                         writer.write(status);
                     } catch (Exception e) {
-                        log.error("文件上传失败，原因：" + e.toString());
+                        log.error("文件上传失败，原因：", e);
                     }
                 }
             });
         } catch (Exception e) {
-            log.error("文件上传失败，原因：" + e.toString());
+            log.error("文件上传失败，原因：", e);
         }
     }
 
