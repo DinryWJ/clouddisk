@@ -1,6 +1,5 @@
 package com.dinry.clouddisk.controller;
 
-import ch.qos.logback.core.util.TimeUtil;
 import com.dinry.clouddisk.api.ApiResponse;
 import com.dinry.clouddisk.service.UploadService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -20,6 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 
 /**
  * @Author: 吴佳杰
@@ -47,6 +49,12 @@ public class UploadController {
 
     @Autowired
     private UploadService uploadService;
+
+    public static void main(String[] args) throws IOException {
+        String md = DigestUtils.md5DigestAsHex(new FileInputStream(new File("C:\\下载\\LOL_V4.0.8.2_FULL.7z.004")));
+        String md2 = DigestUtils.md5DigestAsHex(new FileInputStream(new File("E:\\disk\\home\\1992294400-LOL_V4082_FULL7z004.004")));
+        System.out.println(md.equals(md2));
+    }
 
     @PostMapping(path = "/upload")
     public ResponseEntity<ApiResponse> uploadPost(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
@@ -80,7 +88,15 @@ public class UploadController {
     }
 
     @GetMapping(path = "/upload")
-    public ResponseEntity<ApiResponse> uploadGet(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename) {
+    public ResponseEntity<ApiResponse> uploadGet(String md5, int chunkNumber, int totalChunks, long chunkSize, long totalSize, String identifier, String filename) {
+        //TODO:若文件MD5相同，在最后一块文件块时转储。
+        if (md5 != null && Objects.equals(md5, "f0031327974fd772369ce317f4972f04")) {
+            if (chunkNumber == totalChunks){
+                log.info("转储文件{}",filename);
+            }
+            return ApiResponse.successResponse("found");
+        }
+
         if (validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename, null).equals("valid")) {
             String chunkFilename = getChunkFilename(chunkNumber, identifier);
             if (Files.exists(Paths.get(chunkFilename))) {
@@ -195,11 +211,5 @@ public class UploadController {
 
     private String getChunkFilename(int chunkNumber, String identifier) {
         return new File(temporaryFolder, "uploader-" + identifier + '.' + chunkNumber).getAbsolutePath();
-    }
-
-    public static void main(String[] args) throws IOException {
-        String md = DigestUtils.md5DigestAsHex(new FileInputStream(new File("C:\\下载\\LOL_V4.0.8.2_FULL.7z.004")));
-        String md2 = DigestUtils.md5DigestAsHex(new FileInputStream(new File("E:\\disk\\home\\1992294400-LOL_V4082_FULL7z004.004")));
-        System.out.println(md.equals(md2));
     }
 }
