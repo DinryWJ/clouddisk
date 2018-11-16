@@ -10,10 +10,13 @@ import java.io.Serializable;
 
 /**
  * ModelApiResponse
+ * @author 吴佳杰
  */
 @Validated
 @Data
 public class ApiResponse implements Serializable {
+    private static final long serialVersionUID = -8407728322598034531L;
+
     @JsonProperty("returnCode")
     private Integer returnCode = null;
     @JsonProperty("returnType")
@@ -21,7 +24,7 @@ public class ApiResponse implements Serializable {
     @JsonProperty("returnData")
     private Object returnData = null;
 
-    public ApiResponse() {
+    private ApiResponse() {
         super();
     }
 
@@ -30,23 +33,7 @@ public class ApiResponse implements Serializable {
         res.setReturnCode(returnCode);
         res.setReturnType(returnMsg);
         res.setReturnData(returnData);
-        return new ResponseEntity<ApiResponse>(res, HttpStatus.OK);
-    }
-
-    public static ResponseEntity<ApiResponse> falseResponse(int returnCode, String returnMsg, Object returnData) {
-        ApiResponse res = new ApiResponse();
-        res.setReturnCode(returnCode);
-        res.setReturnType(returnMsg);
-        res.setReturnData(returnData);
-        return new ResponseEntity<ApiResponse>(res, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    public static ResponseEntity<ApiResponse> reuploadResponse(int returnCode, String returnMsg, Object returnData) {
-        ApiResponse res = new ApiResponse();
-        res.setReturnCode(returnCode);
-        res.setReturnType(returnMsg);
-        res.setReturnData(returnData);
-        return new ResponseEntity<ApiResponse>(res, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<ApiResponse>(res, HttpStatus.valueOf(returnCode));
     }
 
     public static ResponseEntity<ApiResponse> successResponse(Object returnData) {
@@ -54,11 +41,11 @@ public class ApiResponse implements Serializable {
     }
 
     public static ResponseEntity<ApiResponse> fileNotFoundResponse(String returnMsg) {
-        return reuploadResponse(204, returnMsg, null);
+        return response(204, returnMsg, null);
     }
 
     public static ResponseEntity<ApiResponse> validResponse(String returnMsg) {
-        return falseResponse(500, returnMsg, null);
+        return response(500, returnMsg, null);
     }
 
     public static ResponseEntity<ApiResponse> errorResponse(String returnMsg) {

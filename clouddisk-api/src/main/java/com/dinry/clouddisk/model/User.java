@@ -1,7 +1,8 @@
 package com.dinry.clouddisk.model;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import java.util.Date;
-import javax.persistence.*;
 
 public class User {
     @Id
@@ -16,6 +17,8 @@ public class User {
     private String nickname;
 
     private String role;
+
+    private String permission;
 
     @Column(name = "class_id")
     private Integer classId;
@@ -118,6 +121,20 @@ public class User {
      */
     public void setRole(String role) {
         this.role = role;
+    }
+
+    /**
+     * @return permission
+     */
+    public String getPermission() {
+        return permission;
+    }
+
+    /**
+     * @param permission
+     */
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
     /**

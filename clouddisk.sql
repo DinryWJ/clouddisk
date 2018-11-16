@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50527
 File Encoding         : 65001
 
-Date: 2018-11-16 14:05:34
+Date: 2018-11-16 17:08:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -269,7 +269,8 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   `salt` varchar(255) NOT NULL,
   `nickname` varchar(255) NOT NULL,
-  `role` varchar(1) NOT NULL,
+  `permission` varchar(255) NOT NULL,
+  `role` varchar(10) NOT NULL,
   `class_id` int(11) DEFAULT NULL,
   `rank` int(11) NOT NULL DEFAULT '0',
   `sex` varchar(1) DEFAULT NULL,
@@ -279,11 +280,12 @@ CREATE TABLE `user` (
   `update_time` datetime NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
+INSERT INTO `user` VALUES ('1', '123', '123', '123', '123', 'edit,view', 'admin', '1', '0', '1', '1', '1', '2018-11-07 16:47:10', '2018-11-15 16:47:15', '0');
 
 -- ----------------------------
 -- Table structure for visitor
