@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50527
 File Encoding         : 65001
 
-Date: 2018-11-06 14:29:20
+Date: 2018-11-16 11:28:32
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -106,13 +106,11 @@ CREATE TABLE `declare` (
 DROP TABLE IF EXISTS `file`;
 CREATE TABLE `file` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `owner_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `filename` varchar(255) NOT NULL,
-  `filepath` varchar(255) DEFAULT NULL,
+  `filepath` varchar(255) NOT NULL,
   `size` varchar(255) NOT NULL,
-  `key` varchar(255) DEFAULT NULL,
-  `expire_time` datetime DEFAULT NULL,
+  `md5` varchar(255) NOT NULL,
   `create_time` datetime NOT NULL,
   `update_time` datetime NOT NULL,
   `is_delete` tinyint(4) NOT NULL,
@@ -208,6 +206,25 @@ CREATE TABLE `review` (
 
 -- ----------------------------
 -- Records of review
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for share
+-- ----------------------------
+DROP TABLE IF EXISTS `share`;
+CREATE TABLE `share` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `file_id` int(11) NOT NULL,
+  `key` varchar(255) NOT NULL,
+  `expired_time` datetime NOT NULL,
+  `create_time` datetime NOT NULL,
+  `status` tinyint(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件分享表';
+
+-- ----------------------------
+-- Records of share
 -- ----------------------------
 
 -- ----------------------------

@@ -8,9 +8,6 @@ public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "owner_id")
-    private Integer ownerId;
-
     @Column(name = "user_id")
     private Integer userId;
 
@@ -20,10 +17,7 @@ public class File {
 
     private String size;
 
-    private String key;
-
-    @Column(name = "expire_time")
-    private Date expireTime;
+    private String md5;
 
     @Column(name = "create_time")
     private Date createTime;
@@ -46,20 +40,6 @@ public class File {
      */
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    /**
-     * @return owner_id
-     */
-    public Integer getOwnerId() {
-        return ownerId;
-    }
-
-    /**
-     * @param ownerId
-     */
-    public void setOwnerId(Integer ownerId) {
-        this.ownerId = ownerId;
     }
 
     /**
@@ -119,31 +99,17 @@ public class File {
     }
 
     /**
-     * @return key
+     * @return md5
      */
-    public String getKey() {
-        return key;
+    public String getMd5() {
+        return md5;
     }
 
     /**
-     * @param key
+     * @param md5
      */
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    /**
-     * @return expire_time
-     */
-    public Date getExpireTime() {
-        return expireTime;
-    }
-
-    /**
-     * @param expireTime
-     */
-    public void setExpireTime(Date expireTime) {
-        this.expireTime = expireTime;
+    public void setMd5(String md5) {
+        this.md5 = md5;
     }
 
     /**
