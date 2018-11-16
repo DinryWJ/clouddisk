@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 public class Link {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
@@ -19,7 +18,7 @@ public class Link {
     private Date updateTime;
 
     @Column(name = "is_delete")
-    private Byte isDelete;
+    private Boolean isDelete;
 
     /**
      * @return id
@@ -94,14 +93,14 @@ public class Link {
     /**
      * @return is_delete
      */
-    public Byte getIsDelete() {
+    public Boolean getIsDelete() {
         return isDelete;
     }
 
     /**
      * @param isDelete
      */
-    public void setIsDelete(Byte isDelete) {
+    public void setIsDelete(Boolean isDelete) {
         this.isDelete = isDelete;
     }
 }

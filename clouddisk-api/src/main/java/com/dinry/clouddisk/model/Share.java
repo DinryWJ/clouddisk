@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 public class Share {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "user_id")
@@ -22,7 +21,7 @@ public class Share {
     @Column(name = "create_time")
     private Date createTime;
 
-    private Byte status;
+    private Boolean status;
 
     /**
      * @return id
@@ -111,14 +110,14 @@ public class Share {
     /**
      * @return status
      */
-    public Byte getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
     /**
      * @param status
      */
-    public void setStatus(Byte status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 }

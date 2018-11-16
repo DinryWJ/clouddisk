@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String username;
@@ -35,7 +34,7 @@ public class User {
     @Column(name = "update_time")
     private Date updateTime;
 
-    private Byte status;
+    private Boolean status;
 
     /**
      * @return id
@@ -222,14 +221,14 @@ public class User {
     /**
      * @return status
      */
-    public Byte getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
     /**
      * @param status
      */
-    public void setStatus(Byte status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 }

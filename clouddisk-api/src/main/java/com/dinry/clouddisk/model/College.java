@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 public class College {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;

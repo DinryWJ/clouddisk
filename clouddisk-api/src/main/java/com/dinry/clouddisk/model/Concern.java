@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 public class Concern {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "from_user_id")

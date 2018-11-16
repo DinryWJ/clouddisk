@@ -1,7 +1,7 @@
 package com.dinry.clouddisk.controller;
 
 import com.dinry.clouddisk.api.ApiResponse;
-import com.dinry.clouddisk.service.UploadService;
+import com.dinry.clouddisk.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Objects;
 
 /**
  * @Author: 吴佳杰
@@ -31,6 +30,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 public class UploadController {
+    private final FileService fileService;
     /**
      * 临时文件夹
      */
@@ -48,7 +48,9 @@ public class UploadController {
     private Long maxFileSize;
 
     @Autowired
-    private UploadService uploadService;
+    public UploadController(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     public static void main(String[] args) throws IOException {
         String md = DigestUtils.md5DigestAsHex(new FileInputStream(new File("C:\\下载\\LOL_V4.0.8.2_FULL.7z.004")));
@@ -57,7 +59,7 @@ public class UploadController {
     }
 
     @PostMapping(path = "/upload")
-    public ResponseEntity<ApiResponse> uploadPost(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
+    public ResponseEntity<ApiResponse> uploadPost(String md5, int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
         if (file != null && file.getSize() > 0) {
             String originalFilename = file.getOriginalFilename();
             String validation = validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename,
@@ -74,7 +76,7 @@ public class UploadController {
                 int currentTestChunk = 1;
                 int numberOfChunks = (int) Math.max(Math.floor(totalSize / (chunkSize * 1.0)), 1);
                 int code = testChunkExists(currentTestChunk, chunkNumber, numberOfChunks,
-                        chunkFilename, originalFilename, identifier, "file");
+                        chunkFilename, originalFilename, identifier, "file", totalSize, md5);
                 if (500 == code) {
                     return ApiResponse.validResponse("invalid_uploader_request");
                 }
@@ -90,9 +92,9 @@ public class UploadController {
     @GetMapping(path = "/upload")
     public ResponseEntity<ApiResponse> uploadGet(String md5, int chunkNumber, int totalChunks, long chunkSize, long totalSize, String identifier, String filename) {
         //TODO:若文件MD5相同，在最后一块文件块时转储。
-        if (md5 != null && Objects.equals(md5, "f0031327974fd772369ce317f4972f04")) {
-            if (chunkNumber == totalChunks){
-                log.info("转储文件{}",filename);
+        if (md5 != null && fileService.isExist(md5)) {
+            if (chunkNumber == totalChunks) {
+                log.info("转储文件{}", filename);
             }
             return ApiResponse.successResponse("found");
         }
@@ -109,7 +111,7 @@ public class UploadController {
         }
     }
 
-    private void write(String identifier, String path) throws IOException {
+    private int write(String identifier, String path) throws IOException {
         String chunkFilename;
         for (int number = 1; ; number++) {
             chunkFilename = getChunkFilename(number, identifier);
@@ -123,6 +125,7 @@ public class UploadController {
             }
         }
         clean(identifier);
+        return 1;
     }
 
     /**
@@ -136,7 +139,7 @@ public class UploadController {
      * @return 返回值200: done 201:partly_done 500:something woring
      */
     private int testChunkExists(int currentTestChunk, int chunkNumber, int numberOfChunks, String filename,
-                                String originalFilename, String identifier, String fileType) {
+                                String originalFilename, String identifier, String fileType, long totalSize, String md5) {
         String cfile;
         while (true) {
             cfile = getChunkFilename(currentTestChunk, identifier);
@@ -149,7 +152,10 @@ public class UploadController {
                     try {
                         log.info("文件:{}上传成功,开始合并文件", originalFilename);
                         String path = this.diskFolder + LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")) + "-" + identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(originalFilename);
-                        write(identifier, path);
+                        int eff = write(identifier, path);
+                        if (eff == 1) {
+                            fileService.saveFile(path, identifier, totalSize + "", md5);
+                        }
                         log.info("文件合并成功,路径:{}", path);
                         return 200;
                     } catch (IOException e) {

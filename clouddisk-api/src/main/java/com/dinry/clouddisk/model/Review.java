@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 public class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "user_id")

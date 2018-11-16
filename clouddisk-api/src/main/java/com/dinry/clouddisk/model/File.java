@@ -5,15 +5,11 @@ import javax.persistence.*;
 
 public class File {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    private String name;
 
-    private String filename;
-
-    private String filepath;
+    private String path;
 
     private String size;
 
@@ -26,7 +22,7 @@ public class File {
     private Date updateTime;
 
     @Column(name = "is_delete")
-    private Byte isDelete;
+    private Boolean isDelete;
 
     /**
      * @return id
@@ -43,45 +39,31 @@ public class File {
     }
 
     /**
-     * @return user_id
+     * @return name
      */
-    public Integer getUserId() {
-        return userId;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @param userId
+     * @param name
      */
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
-     * @return filename
+     * @return path
      */
-    public String getFilename() {
-        return filename;
+    public String getPath() {
+        return path;
     }
 
     /**
-     * @param filename
+     * @param path
      */
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    /**
-     * @return filepath
-     */
-    public String getFilepath() {
-        return filepath;
-    }
-
-    /**
-     * @param filepath
-     */
-    public void setFilepath(String filepath) {
-        this.filepath = filepath;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     /**
@@ -143,14 +125,14 @@ public class File {
     /**
      * @return is_delete
      */
-    public Byte getIsDelete() {
+    public Boolean getIsDelete() {
         return isDelete;
     }
 
     /**
      * @param isDelete
      */
-    public void setIsDelete(Byte isDelete) {
+    public void setIsDelete(Boolean isDelete) {
         this.isDelete = isDelete;
     }
 }

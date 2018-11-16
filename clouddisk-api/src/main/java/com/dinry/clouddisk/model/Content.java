@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 public class Content {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
@@ -13,8 +12,7 @@ public class Content {
     /**
      * 0 目录 1 文件
      */
-    @Column(name = "is_directory")
-    private Byte isDirectory;
+    private Boolean directory;
 
     @Column(name = "file_id")
     private Integer fileId;
@@ -64,19 +62,19 @@ public class Content {
     /**
      * 获取0 目录 1 文件
      *
-     * @return is_directory - 0 目录 1 文件
+     * @return directory - 0 目录 1 文件
      */
-    public Byte getIsDirectory() {
-        return isDirectory;
+    public Boolean getDirectory() {
+        return directory;
     }
 
     /**
      * 设置0 目录 1 文件
      *
-     * @param isDirectory 0 目录 1 文件
+     * @param directory 0 目录 1 文件
      */
-    public void setIsDirectory(Byte isDirectory) {
-        this.isDirectory = isDirectory;
+    public void setDirectory(Boolean directory) {
+        this.directory = directory;
     }
 
     /**

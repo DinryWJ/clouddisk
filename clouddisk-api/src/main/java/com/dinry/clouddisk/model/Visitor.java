@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 public class Visitor {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String ip;
