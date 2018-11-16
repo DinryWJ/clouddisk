@@ -26,11 +26,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class LoginApi {
+
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public LoginApi(UserService userService) {
+        this.userService = userService;
+    }
 
     @ApiOperation(value = "登陆")
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping(value = "/login/login")
     public ResponseEntity<ApiResponse> login(
             @ApiParam(name = "username", value = "用户账号", required = true) @RequestParam(value = "username", required = true) String username,
             @ApiParam(value = "密码", name = "password", required = true) @RequestParam(value = "password", required = true) String password
@@ -38,8 +43,23 @@ public class LoginApi {
         return ApiResponse.successResponse(JwtUtil.sign(username,password));
     }
 
+    @ApiOperation(value = "注册")
+    @PostMapping(value = "/login/register")
+    public ResponseEntity<ApiResponse> register(
+            @ApiParam(name = "username", value = "用户账号", required = true) @RequestParam(value = "username", required = true) String username,
+            @ApiParam(value = "密码", name = "password", required = true) @RequestParam(value = "password", required = true) String password
+    ) {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            return ApiResponse.successResponse("You are already logged in");
+        } else {
+            return ApiResponse.successResponse("You are guest");
+        }
+    }
+
+
     @ApiOperation(value = "a")
-    @RequestMapping(value = "/article", method = RequestMethod.POST)
+    @PostMapping(value = "/article")
     public ResponseEntity<ApiResponse> article() {
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
