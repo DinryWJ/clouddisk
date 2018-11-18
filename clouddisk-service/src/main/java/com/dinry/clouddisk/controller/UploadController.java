@@ -60,6 +60,7 @@ public class UploadController {
     }
 
     @PostMapping(path = "/upload")
+    @RequiresAuthentication
     public ResponseEntity<ApiResponse> uploadPost(String md5, int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
         if (file != null && file.getSize() > 0) {
             String originalFilename = file.getOriginalFilename();
@@ -91,6 +92,7 @@ public class UploadController {
     }
 
     @GetMapping(path = "/upload")
+    @RequiresAuthentication
     public ResponseEntity<ApiResponse> uploadGet(String md5, int chunkNumber, int totalChunks, long chunkSize, long totalSize, String identifier, String filename) {
         //TODO:若文件MD5相同，在最后一块文件块时转储。
         if (md5 != null && fileService.isExist(md5)) {
