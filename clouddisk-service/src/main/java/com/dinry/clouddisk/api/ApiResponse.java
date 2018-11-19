@@ -36,6 +36,14 @@ public class ApiResponse implements Serializable {
         return new ResponseEntity<ApiResponse>(res, HttpStatus.valueOf(returnCode));
     }
 
+    private static ResponseEntity<ApiResponse> commonResponse(int returnCode, String returnMsg, Object returnData) {
+        ApiResponse res = new ApiResponse();
+        res.setReturnCode(returnCode);
+        res.setReturnType(returnMsg);
+        res.setReturnData(returnData);
+        return new ResponseEntity<ApiResponse>(res, HttpStatus.OK);
+    }
+
     public static ResponseEntity<ApiResponse> successResponse(Object returnData) {
         return response(200, "success", returnData);
     }
@@ -49,7 +57,7 @@ public class ApiResponse implements Serializable {
     }
 
     public static ResponseEntity<ApiResponse> errorResponse(String returnMsg) {
-        return response(400, returnMsg, null);
+        return commonResponse(400, "error", returnMsg);
     }
 
 

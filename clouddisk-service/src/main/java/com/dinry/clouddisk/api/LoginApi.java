@@ -1,6 +1,7 @@
 package com.dinry.clouddisk.api;
 
 import com.dinry.clouddisk.common.JwtUtil;
+import com.dinry.clouddisk.model.User;
 import com.dinry.clouddisk.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 
 /**
@@ -37,23 +40,48 @@ public class LoginApi {
     @ApiOperation(value = "登陆")
     @PostMapping(value = "/login/login")
     public ResponseEntity<ApiResponse> login(
-            @ApiParam(name = "username", value = "用户账号", required = true) @RequestParam(value = "username", required = true) String username,
-            @ApiParam(value = "密码", name = "password", required = true) @RequestParam(value = "password", required = true) String password
+            @ApiParam(value = "用户账号", required = true) @RequestParam(value = "username", required = true) String username,
+            @ApiParam(value = "密码", required = true) @RequestParam(value = "password", required = true) String password
     ) {
-        return ApiResponse.successResponse(JwtUtil.sign(username,password));
+        User user = userService.validLogin(username, password);
+        if (user != null) {
+            if (userService.validBan(username)) {
+                return ApiResponse.errorResponse("用户已被封禁");
+            }
+            return ApiResponse.successResponse(JwtUtil.sign(username, user.getPassword()));
+        } else {
+            return ApiResponse.errorResponse("用户名密码错误");
+        }
     }
 
     @ApiOperation(value = "注册")
     @PostMapping(value = "/login/register")
     public ResponseEntity<ApiResponse> register(
-            @ApiParam(name = "username", value = "用户账号", required = true) @RequestParam(value = "username", required = true) String username,
-            @ApiParam(value = "密码", name = "password", required = true) @RequestParam(value = "password", required = true) String password
+            @ApiParam(value = "用户账号", required = true) @RequestParam(value = "username", required = true) String username,
+            @ApiParam(value = "密码", required = true) @RequestParam(value = "pass", required = true) String pass,
+            @ApiParam(value = "重复密码", required = true) @RequestParam(value = "checkpass", required = true) String checkpass
+
     ) {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject.isAuthenticated()) {
-            return ApiResponse.successResponse("You are already logged in");
+        if (!Objects.equals(pass, checkpass)) {
+            return ApiResponse.errorResponse("两次密码不一致");
+        }
+        if (!userService.isExist(username)) {
+            int eff = userService.saveUser(username, pass);
+            return ApiResponse.successResponse(eff);
+        }else {
+            return ApiResponse.errorResponse("用户已存在");
+        }
+    }
+
+    @ApiOperation(value = "验证账号")
+    @GetMapping(value = "/login/valid")
+    public ResponseEntity<ApiResponse> valid(
+            @ApiParam(value = "用户账号", required = true) @RequestParam(value = "username", required = true) String username
+    ) {
+        if (!userService.isExist(username)) {
+            return ApiResponse.successResponse("");
         } else {
-            return ApiResponse.successResponse("You are guest");
+            return ApiResponse.errorResponse("账号已存在");
         }
     }
 
@@ -69,7 +97,7 @@ public class LoginApi {
         }
     }
 
-    @PostMapping("/require_auth")
+    @GetMapping("/require_auth")
     @RequiresAuthentication
     public ResponseEntity<ApiResponse> requireAuth() {
         return ApiResponse.successResponse("You are authenticated");
