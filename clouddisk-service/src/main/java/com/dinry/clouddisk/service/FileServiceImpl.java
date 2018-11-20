@@ -15,7 +15,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 
-@Service("uploadService")
+@Service("fileService")
 public class FileServiceImpl implements FileService {
 
     private final FileMapper fileMapper;

@@ -1,10 +1,11 @@
-package com.dinry.clouddisk.controller;
+package com.dinry.clouddisk.api;
 
 import com.dinry.clouddisk.api.ApiResponse;
 import com.dinry.clouddisk.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 
 /**
  * @Author: 吴佳杰
@@ -30,7 +32,7 @@ import java.time.ZoneOffset;
  */
 @Slf4j
 @RestController
-public class UploadController {
+public class UploadApi {
     private final FileService fileService;
     /**
      * 临时文件夹
@@ -49,14 +51,8 @@ public class UploadController {
     private Long maxFileSize;
 
     @Autowired
-    public UploadController(FileService fileService) {
+    public UploadApi(FileService fileService) {
         this.fileService = fileService;
-    }
-
-    public static void main(String[] args) throws IOException {
-        String md = DigestUtils.md5DigestAsHex(new FileInputStream(new File("C:\\下载\\LOL_V4.0.8.2_FULL.7z.004")));
-        String md2 = DigestUtils.md5DigestAsHex(new FileInputStream(new File("E:\\disk\\home\\1992294400-LOL_V4082_FULL7z004.004")));
-        System.out.println(md.equals(md2));
     }
 
     @PostMapping(path = "/upload")
@@ -96,10 +92,12 @@ public class UploadController {
     public ResponseEntity<ApiResponse> uploadGet(String md5, int chunkNumber, int totalChunks, long chunkSize, long totalSize, String identifier, String filename) {
         //TODO:若文件MD5相同，在最后一块文件块时转储。
         if (md5 != null && fileService.isExist(md5)) {
-            if (chunkNumber == totalChunks) {
-                log.info("转储文件{}", filename);
+            log.info("转储文件{}", filename);
+            int[] arr = new int[totalChunks];
+            for (int i = 0; i < totalChunks; i++) {
+                arr[i] = i;
             }
-            return ApiResponse.successResponse("found");
+            return ApiResponse.successResponse(arr);
         }
 
         if (validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename, null).equals("valid")) {
