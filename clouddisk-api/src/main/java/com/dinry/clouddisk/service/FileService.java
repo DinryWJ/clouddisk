@@ -1,5 +1,7 @@
 package com.dinry.clouddisk.service;
 
+import com.dinry.clouddisk.model.File;
+
 /**
  * @Author: 吴佳杰
  * @Date: 2018/11/14 16:36
@@ -17,13 +19,10 @@ public interface FileService {
     /**
      * 保存文件
      *
-     * @param path
-     * @param name
-     * @param size
-     * @param md5
+     * @param file
      * @return
      */
-    int saveFile(String path, String name, String size, String md5);
+    int saveFile(File file);
 
     /**
      * 转储文件 by md5

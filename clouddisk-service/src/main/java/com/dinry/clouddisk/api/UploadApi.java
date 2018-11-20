@@ -1,29 +1,26 @@
 package com.dinry.clouddisk.api;
 
-import com.dinry.clouddisk.api.ApiResponse;
 import com.dinry.clouddisk.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author: 吴佳杰
@@ -73,12 +70,12 @@ public class UploadApi {
                 }
                 int currentTestChunk = 1;
                 int numberOfChunks = (int) Math.max(Math.floor(totalSize / (chunkSize * 1.0)), 1);
-                int code = testChunkExists(currentTestChunk, chunkNumber, numberOfChunks,
+                Map<Integer, String> resultMap = testChunkExists(currentTestChunk, chunkNumber, numberOfChunks,
                         chunkFilename, originalFilename, identifier, "file", totalSize, md5);
-                if (500 == code) {
-                    return ApiResponse.validResponse("invalid_uploader_request");
+                if (500 == Integer.parseInt(resultMap.get(1))) {
+                    return ApiResponse.validResponse(resultMap.get(2));
                 }
-                return ApiResponse.successResponse(200 == code ? "done" : "party_done");
+                return ApiResponse.successResponse(200 == Integer.parseInt(resultMap.get(1)) ? resultMap.get(2) : "party_done");
             } else {
                 return ApiResponse.validResponse(validation);
             }
@@ -95,7 +92,7 @@ public class UploadApi {
             log.info("转储文件{}", filename);
             int[] arr = new int[totalChunks];
             for (int i = 0; i < totalChunks; i++) {
-                arr[i] = i;
+                arr[i] = i + 1;
             }
             return ApiResponse.successResponse(arr);
         }
@@ -139,13 +136,16 @@ public class UploadApi {
      * @param fileType         文件类型
      * @return 返回值200: done 201:partly_done 500:something woring
      */
-    private int testChunkExists(int currentTestChunk, int chunkNumber, int numberOfChunks, String filename,
-                                String originalFilename, String identifier, String fileType, long totalSize, String md5) {
+    private Map<Integer, String> testChunkExists(int currentTestChunk, int chunkNumber, int numberOfChunks, String filename,
+                                                 String originalFilename, String identifier, String fileType, long totalSize, String md5) {
         String cfile;
+        Map<Integer, String> resultMap = new HashMap<>(1);
         while (true) {
             cfile = getChunkFilename(currentTestChunk, identifier);
             if (!Files.exists(Paths.get(cfile))) {
-                return 201;
+                resultMap.put(1, 201 + "");
+                resultMap.put(2, "file not exist");
+                return resultMap;
             }
             currentTestChunk++;
             if (currentTestChunk >= chunkNumber) {
@@ -155,16 +155,28 @@ public class UploadApi {
                         String path = this.diskFolder + LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")) + "-" + identifier + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(originalFilename);
                         int eff = write(identifier, path);
                         if (eff == 1) {
-                            fileService.saveFile(path, identifier, totalSize + "", md5);
+                            com.dinry.clouddisk.model.File file = new com.dinry.clouddisk.model.File();
+                            file.setSize(totalSize+"");
+                            file.setPath(path);
+                            file.setMd5(md5);
+                            file.setName(identifier);
+                            fileService.saveFile(file);
+
+                            resultMap.put(1, 200 + "");
+                            resultMap.put(2, file.getId() + "");
                         }
                         log.info("文件合并成功,路径:{}", path);
-                        return 200;
+                        return resultMap;
                     } catch (IOException e) {
                         log.error("找不到文件:{}", e);
-                        return 500;
+                        resultMap.put(1, 500 + "");
+                        resultMap.put(2, "can not find file");
+                        return resultMap;
                     }
                 } else {
-                    return 201;
+                    resultMap.put(1, 201 + "");
+                    resultMap.put(2, "upload not complete");
+                    return resultMap;
                 }
             }
         }

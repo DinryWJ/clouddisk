@@ -35,13 +35,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public int saveFile(String path, String name, String size, String md5) {
-        File file = new File();
-        file.setId(null);
-        file.setName(name);
-        file.setPath(path);
-        file.setMd5(md5);
-        file.setSize(size);
+    public int saveFile(File file) {
         file.setIsDelete(false);
         file.setCreateTime(new Date());
         file.setUpdateTime(new Date());
