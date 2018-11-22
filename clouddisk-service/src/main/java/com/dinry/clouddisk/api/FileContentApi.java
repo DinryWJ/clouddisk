@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.api;
 
+import com.dinry.clouddisk.common.FileSizeUtil;
 import com.dinry.clouddisk.dto.LoginInfo;
 import com.dinry.clouddisk.service.FileContentService;
 import io.swagger.annotations.Api;
@@ -38,6 +39,7 @@ public class FileContentApi {
     public ResponseEntity<ApiResponse> saveFileToContent(
             @ApiParam(value = "文件id", required = true) @RequestParam(value = "fileId", required = true) int fileId,
             @ApiParam(value = "文件名", required = true) @RequestParam(value = "fileName", required = true) String fileName,
+            @ApiParam(value = "文件大小", required = true) @RequestParam(value = "totalSize", required = true) long totalSize,
             @ApiParam(value = "文件存储目录", required = true) @RequestParam(value = "rootPath", required = true) String rootPath,
             @ApiParam(value = "是否为文件夹", required = true) @RequestParam(value = "directory", required = true) boolean directory,
             @ApiParam(value = "文件类型", required = true) @RequestParam(value = "fileType", required = true) String fileType
@@ -48,7 +50,7 @@ public class FileContentApi {
             if (Objects.equals("/",rootPath)){
                 fileName = fileContentService.detectFileNameDuplicate(fileName,0);
 
-                eff = fileContentService.saveFileToContent(fileId, fileName, 0, fileType, info.getUserId());
+                eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), 0, fileType, info.getUserId());
                 if (eff>0){
                     return ApiResponse.successResponse(eff);
                 }

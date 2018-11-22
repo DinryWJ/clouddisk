@@ -51,6 +51,9 @@ public class ApiResponse implements Serializable {
     public static ResponseEntity<ApiResponse> fileNotFoundResponse(String returnMsg) {
         return response(204, returnMsg, null);
     }
+    public static ResponseEntity<ApiResponse> fileNotFoundResponse2(Object returnData) {
+        return response(204, "file_not_found", returnData);
+    }
 
     public static ResponseEntity<ApiResponse> validResponse(String returnMsg) {
         return response(500, returnMsg, null);

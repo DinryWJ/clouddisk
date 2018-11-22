@@ -25,10 +25,11 @@ public class FileContentServiceImpl implements FileContentService {
     }
 
     @Override
-    public int saveFileToContent(int fileId, String name, int directoryId, String fileType, Integer userId) {
+    public int saveFileToContent(int fileId, String name, String totalSize, int directoryId, String fileType, Integer userId) {
         FileContent fileContent = new FileContent();
         fileContent.setFileId(fileId);
         fileContent.setName(name);
+        fileContent.setTotalSize(totalSize);
         fileContent.setDirectoryId(directoryId);
         fileContent.setFileType(fileType);
         fileContent.setUserId(userId);
@@ -39,14 +40,29 @@ public class FileContentServiceImpl implements FileContentService {
 
     @Override
     public String detectFileNameDuplicate(String fileName, int directoryId) {
-        List<String> names = fileContentMapper.selectFileContentNames(fileName,directoryId);
-        //TODO;fff
-//        if (names.size()>0){
-//            while(true){
-//                int i = 0;
-//                if (names.contains(fileName))
-//            }
-//        }
+        String extension = fileName.substring(fileName.lastIndexOf("."));
+        String name = fileName.substring(0, fileName.lastIndexOf("."));
+        StringBuilder sb = new StringBuilder(name);
+        List<String> names = fileContentMapper.selectFileContentNames(name,directoryId);
+        if (names.size()>0){
+            int i = 1;
+            while(true){
+                if (names.contains(sb.append(extension).toString())){
+                    sb.delete(sb.lastIndexOf("."),sb.length());
+                    if (i==1){
+                        sb.append("(").append(i).append(")");
+                    }else {
+                        sb.setCharAt(sb.length()-2, String.valueOf(i).charAt(0));
+                    }
+                }else {
+                    break;
+                }
+                i++;
+            }
+        }else {
+            sb.append(extension);
+        }
+        return sb.toString();
     }
 
 }

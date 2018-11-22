@@ -14,6 +14,9 @@ public class FileContent {
 
     private String name;
 
+    @Column(name = "total_size")
+    private String totalSize;
+
     @Column(name = "directory_id")
     private Integer directoryId;
 
@@ -50,6 +53,14 @@ public class FileContent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTotalSize() {
+        return totalSize;
+    }
+
+    public void setTotalSize(String totalSize) {
+        this.totalSize = totalSize;
     }
 
     public Integer getDirectoryId() {

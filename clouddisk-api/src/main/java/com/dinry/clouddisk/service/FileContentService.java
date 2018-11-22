@@ -11,12 +11,13 @@ public interface FileContentService {
      *
      * @param fileId
      * @param name
+     * @param totalSize
      * @param directoryId
      * @param fileType
      * @param userId
      * @return
      */
-    int saveFileToContent(int fileId, String name, int directoryId, String fileType, Integer userId);
+    int saveFileToContent(int fileId, String name, String totalSize, int directoryId, String fileType, Integer userId);
 
     /**
      * 检查文件重复并修改
