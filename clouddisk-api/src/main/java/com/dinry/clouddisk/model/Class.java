@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 public class Class {
     @Id
+    @GeneratedValue(generator = "JDBC")
     private Integer id;
 
     private String name;

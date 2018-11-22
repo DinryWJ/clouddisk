@@ -6,14 +6,25 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 import javax.persistence.*;
 
-public class Link {
+@Table(name = "file_content")
+public class FileContent {
     @Id
     @GeneratedValue(generator = "JDBC")
     private Integer id;
 
     private String name;
 
-    private String address;
+    @Column(name = "directory_id")
+    private Integer directoryId;
+
+    @Column(name = "file_id")
+    private Integer fileId;
+
+    @Column(name = "file_type")
+    private String fileType;
+
+    @Column(name = "user_id")
+    private Integer userId;
 
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
@@ -25,90 +36,67 @@ public class Link {
     @Column(name = "update_time")
     private Date updateTime;
 
-    @Column(name = "is_delete")
-    private Boolean isDelete;
-
-    /**
-     * @return id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * @param id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * @return name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return address
-     */
-    public String getAddress() {
-        return address;
+    public Integer getDirectoryId() {
+        return directoryId;
     }
 
-    /**
-     * @param address
-     */
-    public void setAddress(String address) {
-        this.address = address;
+    public void setDirectoryId(Integer directoryId) {
+        this.directoryId = directoryId;
     }
 
-    /**
-     * @return create_time
-     */
+    public Integer getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Integer fileId) {
+        this.fileId = fileId;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
 
-    /**
-     * @param createTime
-     */
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
-    /**
-     * @return update_time
-     */
     public Date getUpdateTime() {
         return updateTime;
     }
 
-    /**
-     * @param updateTime
-     */
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    /**
-     * @return is_delete
-     */
-    public Boolean getIsDelete() {
-        return isDelete;
-    }
-
-    /**
-     * @param isDelete
-     */
-    public void setIsDelete(Boolean isDelete) {
-        this.isDelete = isDelete;
     }
 }

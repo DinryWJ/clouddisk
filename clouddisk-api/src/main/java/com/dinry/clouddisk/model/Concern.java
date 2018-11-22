@@ -1,10 +1,14 @@
 package com.dinry.clouddisk.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 import javax.persistence.*;
 
 public class Concern {
     @Id
+    @GeneratedValue(generator = "JDBC")
     private Integer id;
 
     @Column(name = "from_user_id")
@@ -13,6 +17,8 @@ public class Concern {
     @Column(name = "to_user_id")
     private Integer toUserId;
 
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Column(name = "create_time")
     private Date createTime;
 

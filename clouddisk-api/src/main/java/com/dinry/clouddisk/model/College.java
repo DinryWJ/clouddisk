@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 public class College {
     @Id
+    @GeneratedValue(generator = "JDBC")
     private Integer id;
 
     private String name;

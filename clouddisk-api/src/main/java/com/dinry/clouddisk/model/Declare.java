@@ -1,14 +1,20 @@
 package com.dinry.clouddisk.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 import javax.persistence.*;
 
 public class Declare {
     @Id
+    @GeneratedValue(generator = "JDBC")
     private Integer id;
 
     private String context;
 
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Column(name = "create_time")
     private Date createTime;
 

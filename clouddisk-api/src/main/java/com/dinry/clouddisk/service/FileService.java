@@ -1,6 +1,6 @@
 package com.dinry.clouddisk.service;
 
-import com.dinry.clouddisk.model.File;
+import com.dinry.clouddisk.model.TFile;
 
 /**
  * @Author: 吴佳杰
@@ -19,10 +19,10 @@ public interface FileService {
     /**
      * 保存文件
      *
-     * @param file
+     * @param tFile
      * @return
      */
-    int saveFile(File file);
+    int saveFile(TFile tFile);
 
     /**
      * 转储文件 by md5
@@ -31,4 +31,11 @@ public interface FileService {
      * @return
      */
     int transferFileByMd5(String md5, int userId);
+
+    /**
+     * 获取相同md5文件的id
+     * @param md5
+     * @return
+     */
+    int getFileIdByMd5(String md5);
 }

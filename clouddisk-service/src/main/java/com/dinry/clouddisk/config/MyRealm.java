@@ -1,7 +1,9 @@
 package com.dinry.clouddisk.config;
 
+import com.dinry.clouddisk.api.LoginApi;
 import com.dinry.clouddisk.common.JwtToken;
 import com.dinry.clouddisk.common.JwtUtil;
+import com.dinry.clouddisk.dto.LoginInfo;
 import com.dinry.clouddisk.model.User;
 import com.dinry.clouddisk.service.UserService;
 import org.apache.shiro.authc.AuthenticationException;
@@ -76,7 +78,7 @@ public class MyRealm extends AuthorizingRealm {
         if (!JwtUtil.verify(token, username, user.getPassword())) {
             throw new AuthenticationException("Username or password error");
         }
-
-        return new SimpleAuthenticationInfo(token, token, "my_realm");
+        LoginInfo info = new LoginInfo(user.getUsername(), user.getId());
+        return new SimpleAuthenticationInfo(info, token, "my_realm");
     }
 }
