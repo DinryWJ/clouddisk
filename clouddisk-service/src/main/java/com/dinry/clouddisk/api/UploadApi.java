@@ -111,7 +111,10 @@ public class UploadApi {
             resultMap.put("fileId", fileId + "");
             return ApiResponse.successResponse(resultMap);
         }
-
+        //文件块总数为1时需要重传，因为如果返回200，会同时被uploader的fileSuccess捕获。
+        if (totalChunks==1){
+            return ApiResponse.fileNotFoundResponse("file not found");
+        }
         List<Integer> resultList = new ArrayList<>();
         for (int i = 0; i < totalChunks; i++) {
             String chunkFilename = getChunkFilename(i, identifier);
@@ -121,10 +124,6 @@ public class UploadApi {
         }
         resultMap.put("success", "false");
         resultMap.put("chunks", String.valueOf(resultList));
-        //文件块总数为1时需要重传，因为如果返回200，会同时被uploader的fileSuccess捕获。
-        if (totalChunks==1){
-            return ApiResponse.fileNotFoundResponse("file not found");
-        }
         return ApiResponse.successResponse(resultMap);
     }
 
