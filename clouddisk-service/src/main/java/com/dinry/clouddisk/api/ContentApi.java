@@ -3,7 +3,9 @@ package com.dinry.clouddisk.api;
 import com.dinry.clouddisk.common.FileSizeUtil;
 import com.dinry.clouddisk.dto.LoginInfo;
 import com.dinry.clouddisk.model.Content;
+import com.dinry.clouddisk.model.FileContent;
 import com.dinry.clouddisk.service.ContentService;
+import com.dinry.clouddisk.service.FileContentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -12,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -25,18 +29,24 @@ import java.util.Objects;
 @RestController
 public class ContentApi {
     private final ContentService contentService;
+    private final FileContentService fileContentService;
 
     @Autowired
-    public ContentApi(ContentService contentService) {
+    public ContentApi(ContentService contentService, FileContentService fileContentService) {
         this.contentService = contentService;
+        this.fileContentService = fileContentService;
     }
 
-    @ApiOperation(value = "获取目录")
+    @ApiOperation(value = "获取目录及文件")
     @GetMapping(value = "/getContent")
     public ResponseEntity<ApiResponse> getContent(
             @ApiParam(value = "上级目录id", required = true) @RequestParam(value = "parentId", required = true) int parentId
     ) {
-        List<Content> list = contentService.getContent(parentId);
-        return ApiResponse.successResponse(list);
+        List<Content> contentList = contentService.getContent(parentId);
+        List<FileContent> fileContentList = fileContentService.getFilesByFolderId(parentId);
+        Map<String, List> resultMap = new HashMap<>(16);
+        resultMap.put("contents", contentList);
+        resultMap.put("files", fileContentList);
+        return ApiResponse.successResponse(resultMap);
     }
 }

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50527
 File Encoding         : 65001
 
-Date: 2018-11-22 11:31:41
+Date: 2018-11-26 16:17:15
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -74,11 +74,15 @@ CREATE TABLE `content` (
   `create_time` datetime NOT NULL,
   `update_time` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of content
 -- ----------------------------
+INSERT INTO `content` VALUES ('1', '我的网盘', '/mydisk', '2', '0', '2018-11-12 10:07:11', '2018-11-13 10:07:17');
+INSERT INTO `content` VALUES ('2', '新建', '/mydisk/newfolder', '2', '1', '2018-11-14 10:08:05', '2018-11-14 10:08:09');
+INSERT INTO `content` VALUES ('3', '新建2', '/mydisk/newfolder2', '2', '1', '2018-11-14 10:08:32', '2018-11-14 10:08:37');
+INSERT INTO `content` VALUES ('4', '海王星', '/haiwangxing', '2', '0', '2018-11-20 10:09:32', '2018-11-20 10:09:35');
 
 -- ----------------------------
 -- Table structure for declare
@@ -152,19 +156,19 @@ CREATE TABLE `file_content` (
 -- ----------------------------
 -- Records of file_content
 -- ----------------------------
-INSERT INTO `file_content` VALUES ('18', '第一医院送检平台接口服务-接口规范文档（20170417)(2).doc', '651KB', '0', 'application/msword', '60', '2', '2018-11-22 10:40:12', '2018-11-22 10:40:12');
-INSERT INTO `file_content` VALUES ('19', '第一医院送检平台接口服务-接口规范文档（20170417).doc', '651KB', '0', 'application/msword', '60', '2', '2018-11-22 10:41:00', '2018-11-22 10:41:00');
-INSERT INTO `file_content` VALUES ('20', '第一医院送检平台接口服务-接口规范文档（20170417)(1).doc', '651KB', '0', 'application/msword', '60', '2', '2018-11-22 10:41:12', '2018-11-22 10:41:12');
-INSERT INTO `file_content` VALUES ('21', '第一医院送检平台接口服务-接口规范文档（20170417)(3).doc', '651KB', '0', 'application/msword', '60', '2', '2018-11-22 10:41:26', '2018-11-22 10:41:26');
-INSERT INTO `file_content` VALUES ('27', '[www.java1234.com]JavaEE开发的颠覆者 Spring Boot实战  完整版.pdf', '225.0MB', '0', 'application/pdf', '55', '2', '2018-11-22 10:46:21', '2018-11-22 10:46:21');
-INSERT INTO `file_content` VALUES ('30', '[www.java1234.com]JavaEE开发的颠覆者 Spring Boot实战  完整版(1).pdf', '225.0MB', '0', 'application/pdf', '55', '2', '2018-11-22 10:50:13', '2018-11-22 10:50:13');
-INSERT INTO `file_content` VALUES ('31', '精通Spring 4.x 企业应用开发实战.pdf', '208.0MB', '0', 'application/pdf', '57', '2', '2018-11-22 10:50:45', '2018-11-22 10:50:45');
-INSERT INTO `file_content` VALUES ('32', '图解HTTP.pdf', '13.0MB', '0', 'application/pdf', '61', '2', '2018-11-22 10:51:06', '2018-11-22 10:51:06');
+INSERT INTO `file_content` VALUES ('18', '第一医院送检平台接口服务-接口规范文档（20170417)(2).doc', '651KB', '2', 'application/msword', '60', '2', '2018-11-22 10:40:12', '2018-11-22 10:40:12');
+INSERT INTO `file_content` VALUES ('19', '第一医院送检平台接口服务-接口规范文档（20170417).doc', '651KB', '2', 'application/msword', '60', '2', '2018-11-22 10:41:00', '2018-11-22 10:41:00');
+INSERT INTO `file_content` VALUES ('20', '第一医院送检平台接口服务-接口规范文档（20170417)(1).doc', '651KB', '1', 'application/msword', '60', '2', '2018-11-22 10:41:12', '2018-11-22 10:41:12');
+INSERT INTO `file_content` VALUES ('21', '第一医院送检平台接口服务-接口规范文档（20170417)(3).doc', '651KB', '1', 'application/msword', '60', '2', '2018-11-22 10:41:26', '2018-11-22 10:41:26');
+INSERT INTO `file_content` VALUES ('27', '[www.java1234.com]JavaEE开发的颠覆者 Spring Boot实战  完整版.pdf', '225.0MB', '2', 'application/pdf', '55', '2', '2018-11-22 10:46:21', '2018-11-22 10:46:21');
+INSERT INTO `file_content` VALUES ('30', '[www.java1234.com]JavaEE开发的颠覆者 Spring Boot实战  完整版(1).pdf', '225.0MB', '3', 'application/pdf', '55', '2', '2018-11-22 10:50:13', '2018-11-22 10:50:13');
+INSERT INTO `file_content` VALUES ('31', '精通Spring 4.x 企业应用开发实战.pdf', '208.0MB', '3', 'application/pdf', '57', '2', '2018-11-22 10:50:45', '2018-11-22 10:50:45');
+INSERT INTO `file_content` VALUES ('32', '图解HTTP.pdf', '13.0MB', '1', 'application/pdf', '61', '2', '2018-11-22 10:51:06', '2018-11-22 10:51:06');
 INSERT INTO `file_content` VALUES ('33', '图解HTTP(1).pdf', '13.0MB', '0', 'application/pdf', '61', '2', '2018-11-22 10:51:21', '2018-11-22 10:51:21');
-INSERT INTO `file_content` VALUES ('34', 'Xcode_8.2.xip', '4.20GB', '0', '', '62', '2', '2018-11-22 11:15:33', '2018-11-22 11:15:33');
-INSERT INTO `file_content` VALUES ('35', 'response_1542612343866.json', '198B', '0', 'application/json', '63', '2', '2018-11-22 11:16:01', '2018-11-22 11:16:01');
-INSERT INTO `file_content` VALUES ('36', '1110254098 (1).pdf', '36KB', '0', 'application/pdf', '64', '2', '2018-11-22 11:16:08', '2018-11-22 11:16:08');
-INSERT INTO `file_content` VALUES ('37', '1110254159 (6).pdf', '35KB', '0', 'application/pdf', '65', '2', '2018-11-22 11:16:13', '2018-11-22 11:16:13');
+INSERT INTO `file_content` VALUES ('34', 'Xcode_8.2.xip', '4.20GB', '3', '', '62', '2', '2018-11-22 11:15:33', '2018-11-22 11:15:33');
+INSERT INTO `file_content` VALUES ('35', 'response_1542612343866.json', '198B', '4', 'application/json', '63', '2', '2018-11-22 11:16:01', '2018-11-22 11:16:01');
+INSERT INTO `file_content` VALUES ('36', '1110254098 (1).pdf', '36KB', '4', 'application/pdf', '64', '2', '2018-11-22 11:16:08', '2018-11-22 11:16:08');
+INSERT INTO `file_content` VALUES ('37', '1110254159 (6).pdf', '35KB', '4', 'application/pdf', '65', '2', '2018-11-22 11:16:13', '2018-11-22 11:16:13');
 INSERT INTO `file_content` VALUES ('38', '1110254098 (2).pdf', '3KB', '0', 'application/pdf', '66', '2', '2018-11-22 11:16:18', '2018-11-22 11:16:18');
 INSERT INTO `file_content` VALUES ('39', '申请表导出清单.zip', '279KB', '0', 'application/zip', '67', '2', '2018-11-22 11:16:28', '2018-11-22 11:16:28');
 INSERT INTO `file_content` VALUES ('40', '1110254159 (7).pdf', '35KB', '0', 'application/pdf', '68', '2', '2018-11-22 11:16:58', '2018-11-22 11:16:58');

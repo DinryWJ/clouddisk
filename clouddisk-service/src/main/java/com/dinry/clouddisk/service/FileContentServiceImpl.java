@@ -65,4 +65,12 @@ public class FileContentServiceImpl implements FileContentService {
         return sb.toString();
     }
 
+    @Override
+    public List<FileContent> getFilesByFolderId(int folderId) {
+        Example example = new Example(FileContent.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("directoryId", folderId);
+        return fileContentMapper.selectByExample(example);
+    }
+
 }
