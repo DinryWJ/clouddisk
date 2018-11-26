@@ -14,7 +14,7 @@ import java.util.List;
  * @Date: 2018/11/20 10:05
  * @Description:
  */
-@Service("contentService")
+@Service("fileContentService")
 public class FileContentServiceImpl implements FileContentService {
 
     private final FileContentMapper fileContentMapper;
