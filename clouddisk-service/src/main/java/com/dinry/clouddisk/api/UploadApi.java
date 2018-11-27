@@ -124,6 +124,9 @@ public class UploadApi {
         }
         resultMap.put("success", "false");
         resultMap.put("chunks", String.valueOf(resultList));
+        if (resultList.size() ==0){
+            return ApiResponse.fileNotFoundResponse2(resultMap);
+        }
         return ApiResponse.successResponse(resultMap);
     }
 

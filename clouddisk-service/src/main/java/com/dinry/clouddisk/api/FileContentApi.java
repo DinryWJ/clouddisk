@@ -14,15 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
-
 /**
  * @Author: 吴佳杰
  * @Date: 2018/11/20 10:03
  * @Description:
  */
 @Api(value = "目录管理", description = "目录管理")
-@RequestMapping("/content")
+@RequestMapping("/fileContent")
 @RestController
 public class FileContentApi {
 
@@ -41,19 +39,17 @@ public class FileContentApi {
             @ApiParam(value = "文件名", required = true) @RequestParam(value = "fileName", required = true) String fileName,
             @ApiParam(value = "文件大小", required = true) @RequestParam(value = "totalSize", required = true) long totalSize,
             @ApiParam(value = "文件存储目录", required = true) @RequestParam(value = "rootPath", required = true) String rootPath,
+            @ApiParam(value = "文件存储目录id", required = true) @RequestParam(value = "directoryId", required = true) int directoryId,
             @ApiParam(value = "是否为文件夹", required = true) @RequestParam(value = "directory", required = true) boolean directory,
             @ApiParam(value = "文件类型", required = true) @RequestParam(value = "fileType", required = true) String fileType
     ) {
         LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
         int eff = 0;
-        if (!directory){
-            if (Objects.equals("/",rootPath)){
-                fileName = fileContentService.detectFileNameDuplicate(fileName,0);
-
-                eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), 0, fileType, info.getUserId());
-                if (eff>0){
-                    return ApiResponse.successResponse(eff);
-                }
+        if (!directory) {
+            fileName = fileContentService.detectFileNameDuplicate(fileName, directoryId);
+            eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), directoryId, fileType, info.getUserId());
+            if (eff > 0) {
+                return ApiResponse.successResponse(eff);
             }
         }
         return ApiResponse.errorResponse("保存失败，请重试");
