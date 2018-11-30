@@ -1,6 +1,7 @@
 package com.dinry.clouddisk.api;
 
 import com.dinry.clouddisk.common.FileSizeUtil;
+import com.dinry.clouddisk.common.MimeTypeUtil;
 import com.dinry.clouddisk.dto.LoginInfo;
 import com.dinry.clouddisk.service.FileContentService;
 import io.swagger.annotations.Api;
@@ -47,7 +48,7 @@ public class FileContentApi {
         int eff = 0;
         if (!directory) {
             fileName = fileContentService.detectFileNameDuplicate(fileName, directoryId);
-            eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), directoryId, fileType, info.getUserId());
+            eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), directoryId, MimeTypeUtil.getExtension(fileType), info.getUserId());
             if (eff > 0) {
                 return ApiResponse.successResponse(eff);
             }

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50527
 File Encoding         : 65001
 
-Date: 2018-11-26 16:17:15
+Date: 2018-11-30 13:33:45
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -79,10 +79,10 @@ CREATE TABLE `content` (
 -- ----------------------------
 -- Records of content
 -- ----------------------------
-INSERT INTO `content` VALUES ('1', '我的网盘', '/mydisk', '2', '0', '2018-11-12 10:07:11', '2018-11-13 10:07:17');
+INSERT INTO `content` VALUES ('1', '冥王星', '/mydisk', '2', '0', '2018-11-12 10:07:11', '2018-11-13 10:07:17');
 INSERT INTO `content` VALUES ('2', '新建', '/mydisk/newfolder', '2', '1', '2018-11-14 10:08:05', '2018-11-14 10:08:09');
-INSERT INTO `content` VALUES ('3', '新建2', '/mydisk/newfolder2', '2', '1', '2018-11-14 10:08:32', '2018-11-14 10:08:37');
-INSERT INTO `content` VALUES ('4', '海王星', '/haiwangxing', '2', '0', '2018-11-20 10:09:32', '2018-11-20 10:09:35');
+INSERT INTO `content` VALUES ('3', '新建2', '/mydisk/newfolder2', '2', '2', '2018-11-14 10:08:32', '2018-11-14 10:08:37');
+INSERT INTO `content` VALUES ('4', '海王星', '/haiwangxing', '2', '1', '2018-11-20 10:09:32', '2018-11-20 10:09:35');
 
 -- ----------------------------
 -- Table structure for declare
@@ -116,25 +116,26 @@ CREATE TABLE `file` (
   `update_time` datetime NOT NULL,
   `is_delete` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8 COMMENT='文件资源表';
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COMMENT='文件资源表';
 
 -- ----------------------------
 -- Records of file
 -- ----------------------------
-INSERT INTO `file` VALUES ('55', '236584206-wwwjava1234comJavaEESpringBootpdf', 'E:/disk/home/1542786728-236584206-wwwjava1234comJavaEESpringBootpdf.pdf', '236584206', '239abd04e0b016379310ea44bf0be4ac', '2018-11-21 15:52:09', '2018-11-21 15:52:09', '0');
-INSERT INTO `file` VALUES ('56', '21951985-EffectiveJava3rdEditionpdf', 'E:/disk/home/1542786938-21951985-EffectiveJava3rdEditionpdf.pdf', '21951985', 'de4a54eedc5825371a11e2ca07a51b3a', '2018-11-21 15:55:38', '2018-11-21 15:55:38', '0');
-INSERT INTO `file` VALUES ('57', '218248857-Spring4xpdf', 'E:/disk/home/1542787076-218248857-Spring4xpdf.pdf', '218248857', '55b42123bfc91cae294e334390925147', '2018-11-21 15:57:58', '2018-11-21 15:57:58', '0');
-INSERT INTO `file` VALUES ('58', '4229105-rar', 'E:/disk/home/1542787242-4229105-rar.rar', '4229105', 'fa7601d4aeb116c3f7c008db6514b5be', '2018-11-21 16:00:42', '2018-11-21 16:00:42', '0');
-INSERT INTO `file` VALUES ('60', '666719--20170417doc', 'E:/disk/home/1542850891-666719--20170417doc.doc', '666719', 'b8c10083ffface2eed33a9b9c97c7beb', '2018-11-22 09:41:31', '2018-11-22 09:41:31', '0');
-INSERT INTO `file` VALUES ('61', '13750009-HTTPpdf', 'E:/disk/home/1542855066-13750009-HTTPpdf.pdf', '13750009', '2e9ef0754a48b9a5e7dbfb91f3585635', '2018-11-22 10:51:06', '2018-11-22 10:51:06', '0');
-INSERT INTO `file` VALUES ('62', '4521217251-Xcode_82xip', 'E:/disk/home/1542856468-4521217251-Xcode_82xip.xip', '4521217251', 'f0031327974fd772369ce317f4972f04', '2018-11-22 11:15:16', '2018-11-22 11:15:16', '0');
-INSERT INTO `file` VALUES ('63', '198-response_1542612343866json', 'E:/disk/home/1542856550-198-response_1542612343866json.json', '198', '2fc233dcd18513ecd98134758d7633c7', '2018-11-22 11:15:50', '2018-11-22 11:15:50', '0');
-INSERT INTO `file` VALUES ('64', '37066-11102540981pdf', 'E:/disk/home/1542856564-37066-11102540981pdf.pdf', '37066', '14a90d90a88360b4185dbde48690f7e3', '2018-11-22 11:16:04', '2018-11-22 11:16:04', '0');
-INSERT INTO `file` VALUES ('65', '36738-11102541596pdf', 'E:/disk/home/1542856571-36738-11102541596pdf.pdf', '36738', 'cd2d08c0d1c12ceda433029b4d760534', '2018-11-22 11:16:11', '2018-11-22 11:16:11', '0');
-INSERT INTO `file` VALUES ('66', '3410-11102540982pdf', 'E:/disk/home/1542856576-3410-11102540982pdf.pdf', '3410', '4a00b5a8707e5893554278acb9b9d3e8', '2018-11-22 11:16:16', '2018-11-22 11:16:16', '0');
-INSERT INTO `file` VALUES ('67', '285986-zip', 'E:/disk/home/1542856583-285986-zip.zip', '285986', 'a54946dcdfc577fc0e135bfe0fee35ef', '2018-11-22 11:16:23', '2018-11-22 11:16:23', '0');
-INSERT INTO `file` VALUES ('68', '36738-11102541597pdf', 'E:/disk/home/1542856606-36738-11102541597pdf.pdf', '36738', 'bd6853c294f6d9db82a32cdb0a2a8678', '2018-11-22 11:16:46', '2018-11-22 11:16:46', '0');
-INSERT INTO `file` VALUES ('69', '3-1txt', 'E:/disk/home/1542856629-3-1txt.txt', '3', '282ca9cd39954f46447c36c25cc6597c', '2018-11-22 11:17:09', '2018-11-22 11:17:09', '0');
+INSERT INTO `file` VALUES ('94', '21504-xls', 'E:/disk/home/1543300902-21504-xls.xls', '21504', '149056c6efd0f9be1b4744e37ba68deb', '2018-11-27 14:41:42', '2018-11-27 14:41:42', '0');
+INSERT INTO `file` VALUES ('95', '10961-docx', 'E:/disk/home/1543301082-10961-docx.docx', '10961', '051cd746a071b60ed76c797f81c22fc2', '2018-11-27 14:44:42', '2018-11-27 14:44:42', '0');
+INSERT INTO `file` VALUES ('96', '20992--xls', 'E:/disk/home/1543301376-20992--xls.xls', '20992', 'f21f8a74d72961737f51224573a8ecf8', '2018-11-27 14:49:36', '2018-11-27 14:49:36', '0');
+INSERT INTO `file` VALUES ('97', '666719--20170417doc', 'E:/disk/home/1543301502-666719--20170417doc.doc', '666719', 'b8c10083ffface2eed33a9b9c97c7beb', '2018-11-27 14:51:42', '2018-11-27 14:51:42', '0');
+INSERT INTO `file` VALUES ('98', '774652-Java20180205pdf', 'E:/disk/home/1543301556-774652-Java20180205pdf.pdf', '774652', '38767fdb47730db8e6cbca667150c0df', '2018-11-27 14:52:36', '2018-11-27 14:52:36', '0');
+INSERT INTO `file` VALUES ('99', '170-Configini', 'E:/disk/home/1543301573-170-Configini.ini', '170', '2caecb4441b465aa2e76bfd1b4b560d6', '2018-11-27 14:52:53', '2018-11-27 14:52:53', '0');
+INSERT INTO `file` VALUES ('100', '424448-FTPServerexe', 'E:/disk/home/1543301773-424448-FTPServerexe.exe', '424448', '25449645cb0c3e7f6fd3f7ec91ae2d8c', '2018-11-27 14:56:13', '2018-11-27 14:56:13', '0');
+INSERT INTO `file` VALUES ('101', '4229105-rar', 'E:/disk/home/1543301801-4229105-rar.rar', '4229105', 'fa7601d4aeb116c3f7c008db6514b5be', '2018-11-27 14:56:41', '2018-11-27 14:56:41', '0');
+INSERT INTO `file` VALUES ('102', '218248857-Spring4xpdf', 'E:/disk/home/1543301850-218248857-Spring4xpdf.pdf', '218248857', '55b42123bfc91cae294e334390925147', '2018-11-27 14:57:31', '2018-11-27 14:57:31', '0');
+INSERT INTO `file` VALUES ('103', '21951985-EffectiveJava3rdEditionpdf', 'E:/disk/home/1543301936-21951985-EffectiveJava3rdEditionpdf.pdf', '21951985', 'de4a54eedc5825371a11e2ca07a51b3a', '2018-11-27 14:58:56', '2018-11-27 14:58:56', '0');
+INSERT INTO `file` VALUES ('104', '301609789-jyptsql', 'E:/disk/home/1543302022-301609789-jyptsql.sql', '301609789', '83f59118fab2f59ee87df583d8d24d47', '2018-11-27 15:00:25', '2018-11-27 15:00:25', '0');
+INSERT INTO `file` VALUES ('105', '1419-jypttxt', 'E:/disk/home/1543376136-1419-jypttxt.txt', '1419', '8139b7887f84562b069cdce3d79e01e0', '2018-11-28 11:35:36', '2018-11-28 11:35:36', '0');
+INSERT INTO `file` VALUES ('106', '62286-avatarpng', 'E:/disk/home/1543473093-62286-avatarpng.png', '62286', 'ae6f2081b2bd3c319b55b681a49abbaa', '2018-11-29 14:31:33', '2018-11-29 14:31:33', '0');
+INSERT INTO `file` VALUES ('107', '136795-2017zip', 'E:/disk/home/1543554446-136795-2017zip.zip', '136795', 'cd70903d5ca1e785fd99ffc3eeaa2bd3', '2018-11-30 13:07:26', '2018-11-30 13:07:26', '0');
+INSERT INTO `file` VALUES ('108', '7483150-rar', 'E:/disk/home/1543554462-7483150-rar.rar', '7483150', '64b76aabc37ea908290d32baff54ca61', '2018-11-30 13:07:42', '2018-11-30 13:07:42', '0');
 
 -- ----------------------------
 -- Table structure for file_content
@@ -151,28 +152,33 @@ CREATE TABLE `file_content` (
   `create_time` datetime NOT NULL,
   `update_time` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8 COMMENT='用户文件目录表';
+) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8 COMMENT='用户文件目录表';
 
 -- ----------------------------
 -- Records of file_content
 -- ----------------------------
-INSERT INTO `file_content` VALUES ('18', '第一医院送检平台接口服务-接口规范文档（20170417)(2).doc', '651KB', '2', 'application/msword', '60', '2', '2018-11-22 10:40:12', '2018-11-22 10:40:12');
-INSERT INTO `file_content` VALUES ('19', '第一医院送检平台接口服务-接口规范文档（20170417).doc', '651KB', '2', 'application/msword', '60', '2', '2018-11-22 10:41:00', '2018-11-22 10:41:00');
-INSERT INTO `file_content` VALUES ('20', '第一医院送检平台接口服务-接口规范文档（20170417)(1).doc', '651KB', '1', 'application/msword', '60', '2', '2018-11-22 10:41:12', '2018-11-22 10:41:12');
-INSERT INTO `file_content` VALUES ('21', '第一医院送检平台接口服务-接口规范文档（20170417)(3).doc', '651KB', '1', 'application/msword', '60', '2', '2018-11-22 10:41:26', '2018-11-22 10:41:26');
-INSERT INTO `file_content` VALUES ('27', '[www.java1234.com]JavaEE开发的颠覆者 Spring Boot实战  完整版.pdf', '225.0MB', '2', 'application/pdf', '55', '2', '2018-11-22 10:46:21', '2018-11-22 10:46:21');
-INSERT INTO `file_content` VALUES ('30', '[www.java1234.com]JavaEE开发的颠覆者 Spring Boot实战  完整版(1).pdf', '225.0MB', '3', 'application/pdf', '55', '2', '2018-11-22 10:50:13', '2018-11-22 10:50:13');
-INSERT INTO `file_content` VALUES ('31', '精通Spring 4.x 企业应用开发实战.pdf', '208.0MB', '3', 'application/pdf', '57', '2', '2018-11-22 10:50:45', '2018-11-22 10:50:45');
-INSERT INTO `file_content` VALUES ('32', '图解HTTP.pdf', '13.0MB', '1', 'application/pdf', '61', '2', '2018-11-22 10:51:06', '2018-11-22 10:51:06');
-INSERT INTO `file_content` VALUES ('33', '图解HTTP(1).pdf', '13.0MB', '0', 'application/pdf', '61', '2', '2018-11-22 10:51:21', '2018-11-22 10:51:21');
-INSERT INTO `file_content` VALUES ('34', 'Xcode_8.2.xip', '4.20GB', '3', '', '62', '2', '2018-11-22 11:15:33', '2018-11-22 11:15:33');
-INSERT INTO `file_content` VALUES ('35', 'response_1542612343866.json', '198B', '4', 'application/json', '63', '2', '2018-11-22 11:16:01', '2018-11-22 11:16:01');
-INSERT INTO `file_content` VALUES ('36', '1110254098 (1).pdf', '36KB', '4', 'application/pdf', '64', '2', '2018-11-22 11:16:08', '2018-11-22 11:16:08');
-INSERT INTO `file_content` VALUES ('37', '1110254159 (6).pdf', '35KB', '4', 'application/pdf', '65', '2', '2018-11-22 11:16:13', '2018-11-22 11:16:13');
-INSERT INTO `file_content` VALUES ('38', '1110254098 (2).pdf', '3KB', '0', 'application/pdf', '66', '2', '2018-11-22 11:16:18', '2018-11-22 11:16:18');
-INSERT INTO `file_content` VALUES ('39', '申请表导出清单.zip', '279KB', '0', 'application/zip', '67', '2', '2018-11-22 11:16:28', '2018-11-22 11:16:28');
-INSERT INTO `file_content` VALUES ('40', '1110254159 (7).pdf', '35KB', '0', 'application/pdf', '68', '2', '2018-11-22 11:16:58', '2018-11-22 11:16:58');
-INSERT INTO `file_content` VALUES ('41', '1.txt', '3B', '0', 'text/plain', '69', '2', '2018-11-22 11:17:14', '2018-11-22 11:17:14');
+INSERT INTO `file_content` VALUES ('70', 'jypt.sql', '287.0MB', '0', 'unknown', '92', '2', '2018-11-27 14:39:39', '2018-11-27 14:39:39');
+INSERT INTO `file_content` VALUES ('71', 'jypt连接.txt', '1KB', '0', 'text', '93', '2', '2018-11-27 14:40:25', '2018-11-27 14:40:25');
+INSERT INTO `file_content` VALUES ('72', '宁一.xls', '21KB', '0', 'xls', '94', '2', '2018-11-27 14:41:58', '2018-11-27 14:41:58');
+INSERT INTO `file_content` VALUES ('73', '我的.docx', '10KB', '0', 'doc', '95', '2', '2018-11-27 14:44:53', '2018-11-27 14:44:53');
+INSERT INTO `file_content` VALUES ('74', '龙山-迪安.xls', '20KB', '0', 'xls', '96', '2', '2018-11-27 14:49:36', '2018-11-27 14:49:36');
+INSERT INTO `file_content` VALUES ('75', '第一医院送检平台接口服务-接口规范文档（20170417).doc', '651KB', '0', 'doc', '97', '2', '2018-11-27 14:51:42', '2018-11-27 14:51:42');
+INSERT INTO `file_content` VALUES ('76', '卓健科技 Java 技术开发规范 20180205.pdf', '756KB', '0', 'pdf', '98', '2', '2018-11-27 14:52:36', '2018-11-27 14:52:36');
+INSERT INTO `file_content` VALUES ('77', 'Config.ini', '170B', '0', 'unknown', '99', '2', '2018-11-27 14:54:10', '2018-11-27 14:54:10');
+INSERT INTO `file_content` VALUES ('78', 'Config(1).ini', '170B', '0', 'unknown', '99', '2', '2018-11-27 14:55:50', '2018-11-27 14:55:50');
+INSERT INTO `file_content` VALUES ('79', 'FTPServer.exe', '414KB', '1', 'exe', '100', '2', '2018-11-27 14:56:24', '2018-11-27 14:56:24');
+INSERT INTO `file_content` VALUES ('80', '入职包（员工手册等）.rar', '4.0MB', '1', 'unknown', '101', '2', '2018-11-27 14:56:42', '2018-11-27 14:56:42');
+INSERT INTO `file_content` VALUES ('81', '精通Spring 4.x 企业应用开发实战.pdf', '208.0MB', '4', 'pdf', '102', '2', '2018-11-27 14:57:31', '2018-11-27 14:57:31');
+INSERT INTO `file_content` VALUES ('82', 'Effective Java (3rd Edition).pdf', '20.0MB', '1', 'pdf', '103', '2', '2018-11-27 14:58:56', '2018-11-27 14:58:56');
+INSERT INTO `file_content` VALUES ('83', 'jypt.sql', '287.0MB', '1', 'unknown', '92', '2', '2018-11-27 14:59:21', '2018-11-27 14:59:21');
+INSERT INTO `file_content` VALUES ('84', 'jypt.sql', '287.0MB', '4', 'unknown', '92', '2', '2018-11-27 14:59:45', '2018-11-27 14:59:45');
+INSERT INTO `file_content` VALUES ('85', 'jypt.sql', '287.0MB', '3', 'text', '104', '2', '2018-11-27 15:00:25', '2018-11-27 15:00:25');
+INSERT INTO `file_content` VALUES ('86', 'jypt连接.txt', '1KB', '3', 'text', '105', '2', '2018-11-28 11:35:36', '2018-11-28 11:35:36');
+INSERT INTO `file_content` VALUES ('87', 'avatar.png', '60KB', '0', 'image', '106', '2', '2018-11-29 14:31:33', '2018-11-29 14:31:33');
+INSERT INTO `file_content` VALUES ('88', 'avatar(1).png', '60KB', '0', 'image', '106', '2', '2018-11-29 17:14:52', '2018-11-29 17:14:52');
+INSERT INTO `file_content` VALUES ('89', 'avatar.png', '60KB', '1', 'image', '106', '2', '2018-11-30 10:37:30', '2018-11-30 10:37:30');
+INSERT INTO `file_content` VALUES ('90', '软件工程专业工程实习文档模板（2017年）.zip', '133KB', '0', 'zip', '107', '2', '2018-11-30 13:07:26', '2018-11-30 13:07:26');
+INSERT INTO `file_content` VALUES ('91', '网盘资料.rar', '7.0MB', '0', 'unknown', '108', '2', '2018-11-30 13:07:42', '2018-11-30 13:07:42');
 
 -- ----------------------------
 -- Table structure for link
