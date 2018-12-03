@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
@@ -62,7 +61,7 @@ public class FileApi {
         if (file != null && file.getSize() > 0) {
             String originalFilename = file.getOriginalFilename();
             String validation = validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename,
-                    (int) file.getSize());
+                    file.getSize());
             if ("valid".equals(validation)) {
                 String chunkFilename = getChunkFileName(chunkNumber, identifier);
                 if (!Files.exists(Paths.get(chunkFilename))) {
@@ -158,7 +157,7 @@ public class FileApi {
      * @param originalFilename 源文件名称
      * @param identifier       文件
      * @param fileType         文件类型
-     * @return 返回值200: done 201:partly_done 500:something woring
+     * @return 返回值200:done 201:partly_done 500:something wrong
      */
     private Map<String, String> testChunkExists(int currentTestChunk, int chunkNumber, int numberOfChunks, String filename,
                                                 String originalFilename, String identifier, String fileType, long totalSize, String md5) {
@@ -222,8 +221,8 @@ public class FileApi {
         }
     }
 
-    private String validateRequest(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, Integer fileSize) {
-        if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0 || identifier.length() == 0 || filename.length() == 0) {
+    private String validateRequest(int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, long fileSize) {
+        if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0 || identifier.length() == 0 || filename.length() == 0 || fileSize == 0) {
             return "non_uploader_request";
         }
         int numberOfChunks = (int) Math.max(Math.floor(totalSize / (chunkSize * 1.0)), 1);
@@ -233,22 +232,20 @@ public class FileApi {
         if (this.maxFileSize != null && totalSize > this.maxFileSize) {
             return "invalid_uploader_request2";
         }
-        if (fileSize != null) {
-            if (chunkNumber < numberOfChunks && fileSize != chunkSize) {
-                return "invalid_uploader_request3";
-            }
-            if (numberOfChunks > 1 && chunkNumber == numberOfChunks
-                    && fileSize != ((totalSize % chunkSize) + chunkSize)) {
-                return "invalid_uploader_request4";
-            }
-            if (numberOfChunks == 1 && fileSize != totalSize) {
-                return "invalid_uploader_request5";
-            }
+        if (chunkNumber < numberOfChunks && fileSize != chunkSize) {
+            return "invalid_uploader_request3";
+        }
+        if (numberOfChunks > 1 && chunkNumber == numberOfChunks
+                && fileSize != ((totalSize % chunkSize) + chunkSize)) {
+            return "invalid_uploader_request4";
+        }
+        if (numberOfChunks == 1 && fileSize != totalSize) {
+            return "invalid_uploader_request5";
         }
         return "valid";
     }
 
     private String getChunkFileName(int chunkNumber, String identifier) {
-        return temporaryFolder+"uploader-" + identifier + '.' + chunkNumber;
+        return temporaryFolder + "uploader-" + identifier + '.' + chunkNumber;
     }
 }
