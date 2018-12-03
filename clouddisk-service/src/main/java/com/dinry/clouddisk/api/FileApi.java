@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
@@ -66,7 +67,7 @@ public class FileApi {
                 String chunkFilename = getChunkFileName(chunkNumber, identifier);
                 if (!Files.exists(Paths.get(chunkFilename))) {
                     try {
-                        file.transferTo(new File(chunkFilename));
+                        file.transferTo(Paths.get(chunkFilename));
                     } catch (IOException e) {
                         log.error("上传错误:" + e.toString());
                     }
