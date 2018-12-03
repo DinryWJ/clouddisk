@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 /**
  * ModelApiResponse
+ *
  * @author 吴佳杰
  */
 @Validated
@@ -48,11 +49,8 @@ public class ApiResponse implements Serializable {
         return response(200, "success", returnData);
     }
 
-    public static ResponseEntity<ApiResponse> fileNotFoundResponse(String returnMsg) {
-        return response(204, returnMsg, null);
-    }
-    public static ResponseEntity<ApiResponse> fileNotFoundResponse2(Object returnData) {
-        return response(204, "file_not_found", returnData);
+    public static ResponseEntity<ApiResponse> fileNotFoundResponse(String returnMsg, Object returnData) {
+        return response(204, returnMsg, returnData);
     }
 
     public static ResponseEntity<ApiResponse> validResponse(String returnMsg) {
@@ -62,6 +60,5 @@ public class ApiResponse implements Serializable {
     public static ResponseEntity<ApiResponse> errorResponse(String returnMsg) {
         return commonResponse(400, "error", returnMsg);
     }
-
 
 }
