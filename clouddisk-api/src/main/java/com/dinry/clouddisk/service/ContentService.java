@@ -17,4 +17,13 @@ public interface ContentService {
      * @return
      */
     List<Content> getContent(int parentId);
+
+    /**
+     * 根据相对路径新建文件夹
+     *
+     * @param relativePath
+     * @param directoryId
+     * @return
+     */
+    int saveFolderByRelativePath(String relativePath, int directoryId);
 }

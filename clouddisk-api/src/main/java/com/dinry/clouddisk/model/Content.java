@@ -20,9 +20,6 @@ public class Content {
 
     private String name;
 
-    @Column(name = "full_path")
-    private String fullPath;
-
     @Column(name = "user_id")
     private Integer userId;
 
@@ -53,14 +50,6 @@ public class Content {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getFullPath() {
-        return fullPath;
-    }
-
-    public void setFullPath(String fullPath) {
-        this.fullPath = fullPath;
     }
 
     public Integer getUserId() {

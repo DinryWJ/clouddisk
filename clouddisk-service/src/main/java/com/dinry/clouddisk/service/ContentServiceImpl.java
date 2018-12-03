@@ -29,4 +29,10 @@ public class ContentServiceImpl implements ContentService {
         criteria.andEqualTo("parentId", parentId);
         return contentMapper.selectByExample(example);
     }
+
+    @Override
+    public int saveFolderByRelativePath(String relativePath, int directoryId) {
+        //TODO 保存
+        return 0;
+    }
 }

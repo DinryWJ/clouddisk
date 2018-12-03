@@ -3,6 +3,7 @@ package com.dinry.clouddisk.api;
 import com.dinry.clouddisk.common.FileSizeUtil;
 import com.dinry.clouddisk.common.MimeTypeUtil;
 import com.dinry.clouddisk.dto.LoginInfo;
+import com.dinry.clouddisk.service.ContentService;
 import com.dinry.clouddisk.service.FileContentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 /**
  * @Author: 吴佳杰
  * @Date: 2018/11/20 10:03
@@ -25,11 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FileContentApi {
 
+    private final ContentService contentService;
     private final FileContentService fileContentService;
 
     @Autowired
-    public FileContentApi(FileContentService fileContentService) {
+    public FileContentApi(FileContentService fileContentService, ContentService contentService) {
         this.fileContentService = fileContentService;
+        this.contentService = contentService;
     }
 
 
@@ -42,16 +47,19 @@ public class FileContentApi {
             @ApiParam(value = "文件存储目录", required = true) @RequestParam(value = "rootPath", required = true) String rootPath,
             @ApiParam(value = "文件存储目录id", required = true) @RequestParam(value = "directoryId", required = true) int directoryId,
             @ApiParam(value = "是否为文件夹", required = true) @RequestParam(value = "directory", required = true) boolean directory,
+            @ApiParam(value = "相对路径", required = true) @RequestParam(value = "relativePath", required = true) String relativePath,
             @ApiParam(value = "文件类型", required = true) @RequestParam(value = "fileType", required = true) String fileType
     ) {
         LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
         int eff = 0;
-        if (!directory) {
-            fileName = fileContentService.detectFileNameDuplicate(fileName, directoryId);
-            eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), directoryId, MimeTypeUtil.getExtension(fileType), info.getUserId());
-            if (eff > 0) {
-                return ApiResponse.successResponse(eff);
-            }
+        int rootId = directoryId;
+        if (!Objects.equals(relativePath, fileName)) {
+            rootId = contentService.saveFolderByRelativePath(relativePath, directoryId);
+        }
+        fileName = fileContentService.detectFileNameDuplicate(fileName, rootId);
+        eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), rootId, MimeTypeUtil.getExtension(fileType), info.getUserId());
+        if (eff > 0) {
+            return ApiResponse.successResponse(eff);
         }
         return ApiResponse.errorResponse("保存失败，请重试");
     }
