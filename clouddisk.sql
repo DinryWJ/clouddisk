@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50527
 File Encoding         : 65001
 
-Date: 2018-11-30 13:33:45
+Date: 2018-12-03 17:14:53
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -68,7 +68,6 @@ DROP TABLE IF EXISTS `content`;
 CREATE TABLE `content` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `full_path` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
   `parent_id` int(11) NOT NULL,
   `create_time` datetime NOT NULL,
@@ -79,10 +78,10 @@ CREATE TABLE `content` (
 -- ----------------------------
 -- Records of content
 -- ----------------------------
-INSERT INTO `content` VALUES ('1', '冥王星', '/mydisk', '2', '0', '2018-11-12 10:07:11', '2018-11-13 10:07:17');
-INSERT INTO `content` VALUES ('2', '新建', '/mydisk/newfolder', '2', '1', '2018-11-14 10:08:05', '2018-11-14 10:08:09');
-INSERT INTO `content` VALUES ('3', '新建2', '/mydisk/newfolder2', '2', '2', '2018-11-14 10:08:32', '2018-11-14 10:08:37');
-INSERT INTO `content` VALUES ('4', '海王星', '/haiwangxing', '2', '1', '2018-11-20 10:09:32', '2018-11-20 10:09:35');
+INSERT INTO `content` VALUES ('1', '冥王星', '2', '0', '2018-11-12 10:07:11', '2018-11-13 10:07:17');
+INSERT INTO `content` VALUES ('2', '新建', '2', '1', '2018-11-14 10:08:05', '2018-11-14 10:08:09');
+INSERT INTO `content` VALUES ('3', '新建2', '2', '2', '2018-11-14 10:08:32', '2018-11-14 10:08:37');
+INSERT INTO `content` VALUES ('4', '海王星', '2', '1', '2018-11-20 10:09:32', '2018-11-20 10:09:35');
 
 -- ----------------------------
 -- Table structure for declare
@@ -116,7 +115,7 @@ CREATE TABLE `file` (
   `update_time` datetime NOT NULL,
   `is_delete` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COMMENT='文件资源表';
+) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8 COMMENT='文件资源表';
 
 -- ----------------------------
 -- Records of file
@@ -136,6 +135,15 @@ INSERT INTO `file` VALUES ('105', '1419-jypttxt', 'E:/disk/home/1543376136-1419-
 INSERT INTO `file` VALUES ('106', '62286-avatarpng', 'E:/disk/home/1543473093-62286-avatarpng.png', '62286', 'ae6f2081b2bd3c319b55b681a49abbaa', '2018-11-29 14:31:33', '2018-11-29 14:31:33', '0');
 INSERT INTO `file` VALUES ('107', '136795-2017zip', 'E:/disk/home/1543554446-136795-2017zip.zip', '136795', 'cd70903d5ca1e785fd99ffc3eeaa2bd3', '2018-11-30 13:07:26', '2018-11-30 13:07:26', '0');
 INSERT INTO `file` VALUES ('108', '7483150-rar', 'E:/disk/home/1543554462-7483150-rar.rar', '7483150', '64b76aabc37ea908290d32baff54ca61', '2018-11-30 13:07:42', '2018-11-30 13:07:42', '0');
+INSERT INTO `file` VALUES ('109', '174699-V12docx', 'E:/disk/home/1543556114-174699-V12docx.docx', '174699', 'f29a18579d9f242257605397104a5ce0', '2018-11-30 13:35:14', '2018-11-30 13:35:14', '0');
+INSERT INTO `file` VALUES ('110', '24-fsxml', 'E:/disk/home/1543802802-24-fsxml.xml', '24', 'f4be663fd9605c09dacc46a690b60ea7', '2018-12-03 10:06:43', '2018-12-03 10:06:43', '0');
+INSERT INTO `file` VALUES ('111', '28-fsxml', 'E:/disk/home/1543803704-28-fsxml.xml', '28', 'a55c4fc2b669db958889713a518411b2', '2018-12-03 10:21:44', '2018-12-03 10:21:44', '0');
+INSERT INTO `file` VALUES ('112', '4573803-fstxt', 'E:/disk/home/1543803876-4573803-fstxt.txt', '4573803', '8760f6f42c9a376c77fc2c5c034deffb', '2018-12-03 10:24:36', '2018-12-03 10:24:36', '0');
+INSERT INTO `file` VALUES ('113', '4573803-fstxt', 'E:/disk/home/1543803940-4573803-fstxt.txt', '4573803', 'e0850a78b25e58a3a7fd53f4ace41b83', '2018-12-03 10:25:40', '2018-12-03 10:25:40', '0');
+INSERT INTO `file` VALUES ('114', '4573806-fstxt', 'E:/disk/home/1543804240-4573806-fstxt.txt', '4573806', '46f9d7c32e2be54d32ae58dfd7453c7e', '2018-12-03 10:30:40', '2018-12-03 10:30:40', '0');
+INSERT INTO `file` VALUES ('115', '4573809-fstxt', 'E:/disk/home/1543804274-4573809-fstxt.txt', '4573809', 'acbf9a81afcc6331d07b437b5a4e6362', '2018-12-03 10:31:14', '2018-12-03 10:31:14', '0');
+INSERT INTO `file` VALUES ('116', '3-1txt', 'E:/disk/home/1543824261-3-1txt.txt', '3', '5fe518a780e6687a78a05a77746bb4f1', '2018-12-03 16:04:21', '2018-12-03 16:04:21', '0');
+INSERT INTO `file` VALUES ('117', '5-tempinner2txt', 'E:/disk/home/1543824512-5-tempinner2txt.txt', '5', '992867dfae02a14704ad1bc92aea3de0', '2018-12-03 16:08:32', '2018-12-03 16:08:32', '0');
 
 -- ----------------------------
 -- Table structure for file_content
@@ -152,7 +160,7 @@ CREATE TABLE `file_content` (
   `create_time` datetime NOT NULL,
   `update_time` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8 COMMENT='用户文件目录表';
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8 COMMENT='用户文件目录表';
 
 -- ----------------------------
 -- Records of file_content
@@ -161,7 +169,7 @@ INSERT INTO `file_content` VALUES ('70', 'jypt.sql', '287.0MB', '0', 'unknown', 
 INSERT INTO `file_content` VALUES ('71', 'jypt连接.txt', '1KB', '0', 'text', '93', '2', '2018-11-27 14:40:25', '2018-11-27 14:40:25');
 INSERT INTO `file_content` VALUES ('72', '宁一.xls', '21KB', '0', 'xls', '94', '2', '2018-11-27 14:41:58', '2018-11-27 14:41:58');
 INSERT INTO `file_content` VALUES ('73', '我的.docx', '10KB', '0', 'doc', '95', '2', '2018-11-27 14:44:53', '2018-11-27 14:44:53');
-INSERT INTO `file_content` VALUES ('74', '龙山-迪安.xls', '20KB', '0', 'xls', '96', '2', '2018-11-27 14:49:36', '2018-11-27 14:49:36');
+INSERT INTO `file_content` VALUES ('74', '龙山-迪安.xls', '20KB', '0', 'xls', '96', '2', '2018-11-27 14:49:36', '2018-11-30 14:49:36');
 INSERT INTO `file_content` VALUES ('75', '第一医院送检平台接口服务-接口规范文档（20170417).doc', '651KB', '0', 'doc', '97', '2', '2018-11-27 14:51:42', '2018-11-27 14:51:42');
 INSERT INTO `file_content` VALUES ('76', '卓健科技 Java 技术开发规范 20180205.pdf', '756KB', '0', 'pdf', '98', '2', '2018-11-27 14:52:36', '2018-11-27 14:52:36');
 INSERT INTO `file_content` VALUES ('77', 'Config.ini', '170B', '0', 'unknown', '99', '2', '2018-11-27 14:54:10', '2018-11-27 14:54:10');
@@ -179,6 +187,18 @@ INSERT INTO `file_content` VALUES ('88', 'avatar(1).png', '60KB', '0', 'image', 
 INSERT INTO `file_content` VALUES ('89', 'avatar.png', '60KB', '1', 'image', '106', '2', '2018-11-30 10:37:30', '2018-11-30 10:37:30');
 INSERT INTO `file_content` VALUES ('90', '软件工程专业工程实习文档模板（2017年）.zip', '133KB', '0', 'zip', '107', '2', '2018-11-30 13:07:26', '2018-11-30 13:07:26');
 INSERT INTO `file_content` VALUES ('91', '网盘资料.rar', '7.0MB', '0', 'unknown', '108', '2', '2018-11-30 13:07:42', '2018-11-30 13:07:42');
+INSERT INTO `file_content` VALUES ('92', 'Effective Java (3rd Edition).pdf', '20.0MB', '2', 'pdf', '103', '2', '2018-11-30 13:34:50', '2018-11-30 13:34:50');
+INSERT INTO `file_content` VALUES ('93', '第一医院送检平台接口服务接口规范文档.doc', '651KB', '2', 'doc', '97', '2', '2018-11-30 13:35:01', '2018-11-30 13:35:01');
+INSERT INTO `file_content` VALUES ('94', '东营市全民健康信息平台区域健康卡项目（医疗系统接口规范）（互联网医院专版）V1.2.docx', '170KB', '2', 'doc', '109', '2', '2018-11-30 13:35:14', '2018-11-30 13:35:14');
+INSERT INTO `file_content` VALUES ('95', 'Config(2).ini', '170B', '0', 'unknown', '99', '2', '2018-11-30 13:52:57', '2018-11-30 13:52:57');
+INSERT INTO `file_content` VALUES ('96', 'FTPServer.exe', '414KB', '0', 'exe', '100', '2', '2018-11-30 14:02:40', '2018-11-30 14:02:40');
+INSERT INTO `file_content` VALUES ('97', 'jypt连接(1).txt', '1KB', '3', 'text', '105', '2', '2018-11-30 16:45:56', '2018-11-30 16:45:56');
+INSERT INTO `file_content` VALUES ('98', 'Config.ini', '170B', '4', 'unknown', '99', '2', '2018-12-03 10:06:12', '2018-12-03 10:06:12');
+INSERT INTO `file_content` VALUES ('111', '1.txt', '3B', '0', 'text', '116', '2', '2018-12-03 16:28:52', '2018-12-03 16:28:52');
+INSERT INTO `file_content` VALUES ('112', '2.txt', '5B', '0', 'text', '117', '2', '2018-12-03 16:35:01', '2018-12-03 16:35:01');
+INSERT INTO `file_content` VALUES ('113', '1(1).txt', '3B', '0', 'text', '116', '2', '2018-12-03 16:41:15', '2018-12-03 16:41:15');
+INSERT INTO `file_content` VALUES ('114', '1(2).txt', '3B', '0', 'text', '116', '2', '2018-12-03 16:57:33', '2018-12-03 16:57:33');
+INSERT INTO `file_content` VALUES ('115', '1(3).txt', '3B', '0', 'text', '116', '2', '2018-12-03 16:57:53', '2018-12-03 16:57:53');
 
 -- ----------------------------
 -- Table structure for link
