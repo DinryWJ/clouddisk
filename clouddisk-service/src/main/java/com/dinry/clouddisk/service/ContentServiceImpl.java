@@ -24,10 +24,11 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public List<Content> getContent(int parentId) {
+    public List<Content> getContent(int parentId, int userId) {
         Example example = new Example(Content.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("parentId", parentId);
+        criteria.andEqualTo("userId", userId);
         return contentMapper.selectByExample(example);
     }
 

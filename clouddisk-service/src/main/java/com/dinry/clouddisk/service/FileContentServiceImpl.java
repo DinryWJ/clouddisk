@@ -76,10 +76,11 @@ public class FileContentServiceImpl implements FileContentService {
     }
 
     @Override
-    public List<FileContent> getFilesByFolderId(int folderId) {
+    public List<FileContent> getFilesByFolderId(int folderId, int userId) {
         Example example = new Example(FileContent.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("directoryId", folderId);
+        criteria.andEqualTo("userId", userId);
         example.setOrderByClause("update_time asc");
         return fileContentMapper.selectByExample(example);
     }

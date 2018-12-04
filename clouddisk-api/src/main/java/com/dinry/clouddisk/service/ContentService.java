@@ -16,7 +16,7 @@ public interface ContentService {
      * @param parentId
      * @return
      */
-    List<Content> getContent(int parentId);
+    List<Content> getContent(int parentId, int userId);
 
     /**
      * 根据相对路径新建文件夹

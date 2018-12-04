@@ -38,5 +38,5 @@ public interface FileContentService {
      * @param folderId
      * @return
      */
-    List<FileContent> getFilesByFolderId(int folderId);
+    List<FileContent> getFilesByFolderId(int folderId, int userId);
 }

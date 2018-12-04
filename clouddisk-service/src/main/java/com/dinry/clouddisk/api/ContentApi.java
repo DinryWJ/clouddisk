@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.api;
 
+import com.dinry.clouddisk.dto.LoginInfo;
 import com.dinry.clouddisk.model.Content;
 import com.dinry.clouddisk.model.FileContent;
 import com.dinry.clouddisk.service.ContentService;
@@ -7,12 +8,10 @@ import com.dinry.clouddisk.service.FileContentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +40,22 @@ public class ContentApi {
     public ResponseEntity<ApiResponse> getContent(
             @ApiParam(value = "上级目录id", required = true) @RequestParam(value = "parentId", required = true) int parentId
     ) {
-        List<Content> contentList = contentService.getContent(parentId);
-        List<FileContent> fileContentList = fileContentService.getFilesByFolderId(parentId);
+        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        List<Content> contentList = contentService.getContent(parentId, info.getUserId());
+        List<FileContent> fileContentList = fileContentService.getFilesByFolderId(parentId, info.getUserId());
         Map<String, List> resultMap = new HashMap<>(16);
         resultMap.put("contents", contentList);
         resultMap.put("files", fileContentList);
         return ApiResponse.successResponse(resultMap);
+    }
+
+    @ApiOperation(value = "saveFolder")
+    @PostMapping(value = "/saveFolder")
+    public ResponseEntity<ApiResponse> saveFolder(
+            @ApiParam(value = "上级目录id", required = true) @RequestParam(value = "parentId", required = true) int parentId,
+            @ApiParam(value = "文件名", required = true) @RequestParam(value = "name", required = true) String name
+    ) {
+        //TODO saveFolder
+        return ApiResponse.successResponse("");
     }
 }
