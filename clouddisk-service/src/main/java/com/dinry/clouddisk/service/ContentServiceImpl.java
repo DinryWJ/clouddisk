@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,8 +32,25 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public int saveFolderByRelativePath(String relativePath, int directoryId) {
-        //TODO 保存
-        return 0;
+    public int saveFolderByRelativePath(String relativePath, int directoryId, int userId) {
+        int parentId = directoryId;
+        boolean flag = true;
+        String[] folders = relativePath.split("/");
+        for (int i = 0; i < folders.length - 1; i++) {
+            Content content = new Content();
+            content.setName(folders[i]);
+            content.setUserId(userId);
+            content.setParentId(parentId);
+            if (flag && contentMapper.selectCount(content) < 1) {
+                flag = false;
+                content.setCreateTime(new Date());
+                content.setUpdateTime(new Date());
+                int eff = contentMapper.insert(content);
+                parentId = content.getId();
+            } else {
+                parentId = contentMapper.selectOne(content).getId();
+            }
+        }
+        return parentId;
     }
 }

@@ -93,7 +93,7 @@ public class FileApi {
                 return ApiResponse.validResponse(validation);
             }
         } else {
-            return ApiResponse.validResponse("invalid_uploader_request");
+            return ApiResponse.validResponse("文件为空");
         }
     }
 
@@ -101,7 +101,6 @@ public class FileApi {
     @RequiresAuthentication
     public ResponseEntity<ApiResponse> uploadGet(String md5, int chunkNumber, int totalChunks, long chunkSize, long totalSize, String identifier, String filename) {
         Map<String, String> resultMap = new HashMap<>(2);
-        //TODO:若文件MD5相同，在最后一块文件块时转储。
         if (md5 != null && fileService.isExist(md5)) {
             log.info("转储文件{}", filename);
             int[] arr = new int[totalChunks];

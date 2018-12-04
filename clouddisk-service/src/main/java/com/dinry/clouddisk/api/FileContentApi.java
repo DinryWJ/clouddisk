@@ -52,12 +52,12 @@ public class FileContentApi {
     ) {
         LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
         int eff = 0;
-        int rootId = directoryId;
+        int parentId = directoryId;
         if (!Objects.equals(relativePath, fileName)) {
-            rootId = contentService.saveFolderByRelativePath(relativePath, directoryId);
+            parentId = contentService.saveFolderByRelativePath(relativePath, directoryId,info.getUserId());
         }
-        fileName = fileContentService.detectFileNameDuplicate(fileName, rootId);
-        eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), rootId, MimeTypeUtil.getExtension(fileType), info.getUserId());
+        fileName = fileContentService.detectFileNameDuplicate(fileName, parentId);
+        eff = fileContentService.saveFileToContent(fileId, fileName, FileSizeUtil.getFileSize(totalSize), parentId, MimeTypeUtil.getExtension(fileType), info.getUserId());
         if (eff > 0) {
             return ApiResponse.successResponse(eff);
         }

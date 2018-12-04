@@ -25,5 +25,5 @@ public interface ContentService {
      * @param directoryId
      * @return
      */
-    int saveFolderByRelativePath(String relativePath, int directoryId);
+    int saveFolderByRelativePath(String relativePath, int directoryId, int userId);
 }

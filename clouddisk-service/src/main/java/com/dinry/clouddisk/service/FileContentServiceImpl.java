@@ -40,15 +40,25 @@ public class FileContentServiceImpl implements FileContentService {
 
     @Override
     public String detectFileNameDuplicate(String fileName, int directoryId) {
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        String name = fileName.substring(0, fileName.lastIndexOf("."));
+        int lastIndexOfDot = fileName.lastIndexOf(".");
+        String extension;
+        String name;
+        if (lastIndexOfDot == -1){
+            extension = "";
+            name = fileName;
+        }else {
+            extension = fileName.substring(lastIndexOfDot);
+            name = fileName.substring(0, lastIndexOfDot);
+        }
         StringBuilder sb = new StringBuilder(name);
         List<String> names = fileContentMapper.selectFileContentNames(name,directoryId);
         if (names.size()>0){
             int i = 1;
             while(true){
                 if (names.contains(sb.append(extension).toString())){
-                    sb.delete(sb.lastIndexOf("."),sb.length());
+                    if (lastIndexOfDot != -1){
+                        sb.delete(sb.lastIndexOf("."),sb.length());
+                    }
                     if (i==1){
                         sb.append("(").append(i).append(")");
                     }else {
