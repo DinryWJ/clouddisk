@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
@@ -59,7 +57,7 @@ public class FileApi {
     @RequiresAuthentication
     public ResponseEntity<ApiResponse> uploadPost(String md5, int chunkNumber, long chunkSize, long totalSize, String identifier, String filename, MultipartFile file) {
         Map<String, String> resultMap = new HashMap<>(2);
-        if (file != null && file.getSize() > 0) {
+        if (!file.isEmpty()) {
             String originalFilename = file.getOriginalFilename();
             String validation = validateRequest(chunkNumber, chunkSize, totalSize, identifier, filename,
                     file.getSize());
@@ -93,7 +91,9 @@ public class FileApi {
                 return ApiResponse.validResponse(validation);
             }
         } else {
-            return ApiResponse.validResponse("文件为空");
+            resultMap.put("success", "true");
+            resultMap.put("fileId", "0");
+            return ApiResponse.successResponse(resultMap);
         }
     }
 
