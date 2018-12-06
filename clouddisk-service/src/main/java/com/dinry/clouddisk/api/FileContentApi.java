@@ -41,11 +41,11 @@ public class FileContentApi {
     @ApiOperation(value = "保存文件至文件目录中")
     @PostMapping(value = "/saveFileToContent")
     public ResponseEntity<ApiResponse> saveFileToContent(
-            @ApiParam(value = "文件id", required = true) @RequestParam(value = "fileId", required = true) int fileId,
+            @ApiParam(value = "文件id", required = true, example = "0") @RequestParam(value = "fileId", required = true) int fileId,
             @ApiParam(value = "文件名", required = true) @RequestParam(value = "fileName", required = true) String fileName,
-            @ApiParam(value = "文件大小", required = true) @RequestParam(value = "totalSize", required = true) long totalSize,
+            @ApiParam(value = "文件大小", required = true,example = "0") @RequestParam(value = "totalSize", required = true) long totalSize,
             @ApiParam(value = "文件存储目录", required = true) @RequestParam(value = "rootPath", required = true) String rootPath,
-            @ApiParam(value = "文件存储目录id", required = true) @RequestParam(value = "directoryId", required = true) int directoryId,
+            @ApiParam(value = "文件存储目录id", required = true, example = "0") @RequestParam(value = "directoryId", required = true) int directoryId,
             @ApiParam(value = "是否为文件夹", required = true) @RequestParam(value = "directory", required = true) boolean directory,
             @ApiParam(value = "相对路径", required = true) @RequestParam(value = "relativePath", required = true) String relativePath,
             @ApiParam(value = "文件类型", required = true) @RequestParam(value = "fileType", required = true) String fileType
@@ -62,5 +62,14 @@ public class FileContentApi {
             return ApiResponse.successResponse(eff);
         }
         return ApiResponse.errorResponse("保存失败，请重试");
+    }
+
+    @ApiOperation(value = "删除文件")
+    @PostMapping(value = "/deleteFile")
+    public ResponseEntity<ApiResponse> deleteFile(
+            @ApiParam(value = "文件id", required = true, example = "0") @RequestParam(value = "fileId", required = true) int fileId
+    ){
+        //TODO 删除文件
+        return null;
     }
 }

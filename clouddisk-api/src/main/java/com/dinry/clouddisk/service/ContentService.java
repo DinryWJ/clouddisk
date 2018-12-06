@@ -26,4 +26,22 @@ public interface ContentService {
      * @return
      */
     int saveFolderByRelativePath(String relativePath, int directoryId, int userId);
+
+    /**
+     * 删除文件夹
+     *
+     * @param contentId
+     * @param userId
+     * @return
+     */
+    int deleteContent(int contentId, Integer userId);
+
+    /**
+     * 新建文件夹
+     *
+     * @param name
+     * @param userId
+     * @return
+     */
+    int saveContent(String name,int parentId, Integer userId);
 }

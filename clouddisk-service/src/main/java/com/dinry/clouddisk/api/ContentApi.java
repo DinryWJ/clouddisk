@@ -38,7 +38,7 @@ public class ContentApi {
     @ApiOperation(value = "获取目录及文件")
     @GetMapping(value = "/getContent")
     public ResponseEntity<ApiResponse> getContent(
-            @ApiParam(value = "上级目录id", required = true) @RequestParam(value = "parentId", required = true) int parentId
+            @ApiParam(value = "上级目录id", required = true, example = "0") @RequestParam(value = "parentId", required = true) int parentId
     ) {
         LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
         List<Content> contentList = contentService.getContent(parentId, info.getUserId());
@@ -49,13 +49,24 @@ public class ContentApi {
         return ApiResponse.successResponse(resultMap);
     }
 
-    @ApiOperation(value = "saveFolder")
+    @ApiOperation(value = "新建文件夹")
     @PostMapping(value = "/saveFolder")
     public ResponseEntity<ApiResponse> saveFolder(
-            @ApiParam(value = "上级目录id", required = true) @RequestParam(value = "parentId", required = true) int parentId,
+            @ApiParam(value = "上级目录id", required = true, example = "0") @RequestParam(value = "parentId", required = true) int parentId,
             @ApiParam(value = "文件名", required = true) @RequestParam(value = "name", required = true) String name
     ) {
-        //TODO saveFolder
-        return ApiResponse.successResponse("");
+        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        int eff = contentService.saveContent(name, parentId, info.getUserId());
+        return ApiResponse.successResponse(eff);
+    }
+
+    @ApiOperation(value = "删除文件夹")
+    @GetMapping(value = "/deleteContent")
+    public ResponseEntity<ApiResponse> deleteContent(
+            @ApiParam(value = "文件Id", required = true, example = "0") @RequestParam(value = "contentId", required = true) int contentId
+    ) {
+        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        int eff = contentService.deleteContent(contentId, info.getUserId());
+        return ApiResponse.successResponse(eff);
     }
 }

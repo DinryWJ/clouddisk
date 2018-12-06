@@ -54,4 +54,23 @@ public class ContentServiceImpl implements ContentService {
         }
         return parentId;
     }
+
+    @Override
+    public int deleteContent(int contentId, Integer userId) {
+        Content content = new Content();
+        content.setUserId(userId);
+        content.setId(contentId);
+        return contentMapper.delete(content);
+    }
+
+    @Override
+    public int saveContent(String name,int parentId, Integer userId) {
+        Content content = new Content();
+        content.setUserId(userId);
+        content.setName(name);
+        content.setParentId(parentId);
+        content.setUpdateTime(new Date());
+        content.setCreateTime(new Date());
+        return contentMapper.insert(content);
+    }
 }
