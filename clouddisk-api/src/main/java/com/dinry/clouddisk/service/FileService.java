@@ -25,17 +25,44 @@ public interface FileService {
     int saveFile(TFile tFile);
 
     /**
-     * 转储文件 by md5
-     * @param md5
-     * @param userId
-     * @return
-     */
-    int transferFileByMd5(String md5, int userId);
-
-    /**
      * 获取相同md5文件的id
+     *
      * @param md5
      * @return
      */
     int getFileIdByMd5(String md5);
+
+    /**
+     * 根据id获取文件类
+     *
+     * @param fileId
+     * @return
+     */
+    TFile getById(Integer fileId);
+
+    /**
+     * 减少文件引用数
+     *
+     * @param id
+     * @param res
+     * @return
+     */
+    int decreaseFileRes(Integer id, Integer res);
+
+    /**
+     * 删除文件
+     *
+     * @param id
+     * @param res
+     * @return
+     */
+    int deleteFile(Integer id, Integer res);
+
+    /**
+     * 文件引用数+1
+     *
+     * @param fileId
+     * @return
+     */
+    int addFileRes(int fileId);
 }

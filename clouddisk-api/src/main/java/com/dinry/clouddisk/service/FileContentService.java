@@ -39,4 +39,21 @@ public interface FileContentService {
      * @return
      */
     List<FileContent> getFilesByFolderId(int folderId, int userId);
+
+    /**
+     * 删除文件目录表下的文件
+     *
+     * @param fileContentId
+     * @param userId
+     */
+    int deleteContentFile(int fileContentId, Integer userId);
+
+    /**
+     * 通过userid, id获取实体类
+     *
+     * @param fileContentId
+     * @param userId
+     * @return
+     */
+    FileContent getFileContentById(int fileContentId, Integer userId);
 }

@@ -108,6 +108,7 @@ public class FileApi {
                 arr[i] = i + 1;
             }
             int fileId = fileService.getFileIdByMd5(md5);
+            fileService.addFileRes(fileId);
             resultMap.put("success", "true");
             resultMap.put("chunks", Arrays.toString(arr));
             resultMap.put("fileId", fileId + "");

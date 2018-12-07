@@ -36,21 +36,43 @@ public class FileServiceImpl implements FileService {
     @Override
     public int saveFile(TFile tFile) {
         tFile.setIsDelete(false);
+        tFile.setRes(1);
         tFile.setCreateTime(new Date());
         tFile.setUpdateTime(new Date());
         return tFileMapper.insert(tFile);
     }
 
     @Override
-    public int transferFileByMd5(String md5, int userId) {
-        return 0;
-    }
-
-    @Override
     public int getFileIdByMd5(String md5) {
         TFile tFile = new TFile();
         tFile.setMd5(md5);
+        tFile.setIsDelete(false);
         return tFileMapper.selectOne(tFile).getId();
+    }
+
+    @Override
+    public TFile getById(Integer fileId) {
+        TFile tFile = new TFile();
+        tFile.setId(fileId);
+        tFile.setIsDelete(false);
+        return tFileMapper.selectOne(tFile);
+    }
+
+    @Override
+    public int decreaseFileRes(Integer id, Integer res) {
+        return tFileMapper.updateFileRes(id, res, res - 1, new Date());
+    }
+
+    @Override
+    public int deleteFile(Integer id, Integer res) {
+        return tFileMapper.deleteFile(id, res, res - 1, new Date());
+    }
+
+    @Override
+    public int addFileRes(int fileId) {
+        TFile tFile = getById(fileId);
+        int res = tFile.getRes();
+        return tFileMapper.updateFileRes(fileId, res, res + 1, new Date());
     }
 
 

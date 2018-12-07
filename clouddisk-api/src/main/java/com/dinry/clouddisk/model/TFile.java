@@ -20,6 +20,8 @@ public class TFile {
 
     private String md5;
 
+    private Integer res;
+
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Column(name = "create_time")
@@ -101,6 +103,14 @@ public class TFile {
      */
     public void setMd5(String md5) {
         this.md5 = md5;
+    }
+
+    public Integer getRes() {
+        return res;
+    }
+
+    public void setRes(Integer res) {
+        this.res = res;
     }
 
     /**

@@ -8,6 +8,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author: 吴佳杰
@@ -83,6 +84,24 @@ public class FileContentServiceImpl implements FileContentService {
         criteria.andEqualTo("userId", userId);
         example.setOrderByClause("update_time asc");
         return fileContentMapper.selectByExample(example);
+    }
+
+    @Override
+    public int deleteContentFile(int fileContentId, Integer userId) {
+        Example example = new Example(FileContent.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("id", fileContentId);
+        criteria.andEqualTo("userId", userId);
+        return fileContentMapper.deleteByExample(example);
+    }
+
+    @Override
+    public FileContent getFileContentById(int fileContentId, Integer userId) {
+        FileContent fileContent =  fileContentMapper.selectByPrimaryKey(fileContentId);
+        if (fileContent != null && Objects.equals(fileContent.getUserId(), userId)) {
+            return fileContent;
+        }
+        return null;
     }
 
 }
