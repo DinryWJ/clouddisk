@@ -79,7 +79,6 @@ public class FileContentApi {
 
     @ApiOperation(value = "删除文件")
     @PostMapping(value = "/deleteFile")
-    @Transactional
     public ResponseEntity<ApiResponse> deleteFile(
             @ApiParam(value = "文件id", required = true, example = "0") @RequestParam(value = "fileContentId", required = true) int fileContentId
     ) {
@@ -87,26 +86,48 @@ public class FileContentApi {
         FileContent fileContent = fileContentService.getFileContentById(fileContentId, info.getUserId());
         if (fileContent != null) {
             int effectedNum = fileContentService.deleteContentFile(fileContentId, info.getUserId());
-            if (fileContent.getFileId() != 0) {
-                TFile tFile = fileService.getById(fileContent.getFileId());
-                int eff = 0;
-                if (tFile.getId() != 0 && tFile.getRes() > 1) {
-                    eff = fileService.decreaseFileRes(tFile.getId(), tFile.getRes());
-                }
-                if (tFile.getId() != 0 && tFile.getRes() == 1) {
-                    try {
-                        Files.delete(Paths.get(tFile.getPath()));
-                    } catch (IOException e) {
-                        log.error("文件删除失败:" + e.getMessage());
-                    }
-                    eff = fileService.deleteFile(tFile.getId(), tFile.getRes());
-                }
-            }
-            if (effectedNum < 1) {
-                throw new RuntimeException("文件删除失败");
-            }
+            deleteFileById(fileContent);
             return ApiResponse.successResponse(effectedNum);
         }
         return ApiResponse.errorResponse("删除失败，请刷新重试");
+    }
+
+    @ApiOperation(value = "批量删除文件")
+    @PostMapping("/batchDeleteFiles")
+    public ResponseEntity<ApiResponse> batchDeleteFiles(
+            @ApiParam(value = "文件id列表", required = true, example = "0") @RequestParam(value = "fileContentIds", required = true) int[] fileContentIds
+    ) {
+        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        FileContent fileContent;
+        int effectedNum = 0;
+        for (int fileContentId : fileContentIds){
+            fileContent = fileContentService.getFileContentById(fileContentId, info.getUserId());
+            if (fileContent != null) {
+                effectedNum += fileContentService.deleteContentFile(fileContentId, info.getUserId());
+                deleteFileById(fileContent);
+            }
+        }
+        if (effectedNum == fileContentIds.length){
+            return ApiResponse.successResponse(effectedNum);
+        }
+        return ApiResponse.errorResponse(String.valueOf(effectedNum));
+    }
+
+    private void deleteFileById(FileContent fileContent) {
+        if (fileContent.getFileId() != 0) {
+            TFile tFile = fileService.getById(fileContent.getFileId());
+            int eff = 0;
+            if (tFile.getId() != 0 && tFile.getRes() > 1) {
+                eff = fileService.decreaseFileRes(tFile.getId(), tFile.getRes());
+            }
+            if (tFile.getId() != 0 && tFile.getRes() == 1) {
+                try {
+                    Files.delete(Paths.get(tFile.getPath()));
+                } catch (IOException e) {
+                    log.error("文件删除失败:" + e.getMessage());
+                }
+                eff = fileService.deleteFile(tFile.getId(), tFile.getRes());
+            }
+        }
     }
 }
