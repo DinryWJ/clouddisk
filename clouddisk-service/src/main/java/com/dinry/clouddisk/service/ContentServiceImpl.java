@@ -1,6 +1,7 @@
 package com.dinry.clouddisk.service;
 
 import com.dinry.clouddisk.dao.ContentMapper;
+import com.dinry.clouddisk.dto.FileInfo;
 import com.dinry.clouddisk.model.Content;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,11 @@ public class ContentServiceImpl implements ContentService {
     @Autowired
     public ContentServiceImpl(ContentMapper contentMapper) {
         this.contentMapper = contentMapper;
+    }
+
+    @Override
+    public Content getContentById(int contentId) {
+        return contentMapper.selectByPrimaryKey(contentId);
     }
 
     @Override
@@ -72,5 +78,10 @@ public class ContentServiceImpl implements ContentService {
         content.setUpdateTime(new Date());
         content.setCreateTime(new Date());
         return contentMapper.insert(content);
+    }
+
+    @Override
+    public List<FileInfo> getFileInfoByContentId(int contentId) {
+        return contentMapper.getFileInfoByContentId(contentId);
     }
 }

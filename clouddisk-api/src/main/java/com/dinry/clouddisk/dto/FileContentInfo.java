@@ -10,5 +10,6 @@ import lombok.Data;
 public class FileContentInfo {
     private Integer id;
     private Boolean isFolder;
+    private String name;
 
 }

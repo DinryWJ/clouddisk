@@ -1,6 +1,7 @@
 package com.dinry.clouddisk.service;
 
 import com.dinry.clouddisk.model.FileContent;
+import com.dinry.clouddisk.model.TFile;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public interface FileContentService {
     String detectFileNameDuplicate(String fileName, int directoryId);
 
     /**
-     * 获取目录下的所有文件
+     * 获取目录下的所有文件目录
      *
      * @param folderId
      * @return
@@ -56,4 +57,13 @@ public interface FileContentService {
      * @return
      */
     FileContent getFileContentById(int fileContentId, Integer userId);
+
+    /**
+     * 通过fileContentId获取File信息
+     *
+     * @param fileContentId
+     * @return
+     */
+    TFile getFileByFileContentId(int fileContentId);
+
 }

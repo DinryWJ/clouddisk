@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.api;
 
+import com.dinry.clouddisk.common.UuidUtil;
 import com.dinry.clouddisk.model.TFile;
 import com.dinry.clouddisk.service.FileService;
 import io.swagger.annotations.Api;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
@@ -91,8 +94,30 @@ public class FileApi {
                 return ApiResponse.validResponse(validation);
             }
         } else {
-            resultMap.put("success", "true");
-            resultMap.put("fileId", "0");
+            //空文件处理
+            TFile tFile = fileService.getEmptyFileByName(filename);
+            String uuid = UuidUtil.getUUID();
+            if (tFile == null) {
+                if (!Files.exists(Paths.get(diskFolder + uuid + "-" + filename))) {
+                    try {
+                        Files.createFile(Paths.get(diskFolder + uuid + "-" + filename));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                TFile emptyFile = new TFile();
+                emptyFile.setSize(0 + "");
+                emptyFile.setPath(diskFolder + uuid + "-" + filename);
+                emptyFile.setMd5("");
+                emptyFile.setName(filename);
+                fileService.saveFile(emptyFile);
+                resultMap.put("success", "true");
+                resultMap.put("fileId", emptyFile.getId() + "");
+            }else {
+                fileService.addFileRes(tFile.getId());
+                resultMap.put("success", "true");
+                resultMap.put("fileId", tFile.getId() + "");
+            }
             return ApiResponse.successResponse(resultMap);
         }
     }

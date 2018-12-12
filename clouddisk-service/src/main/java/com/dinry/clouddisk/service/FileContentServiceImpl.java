@@ -2,6 +2,7 @@ package com.dinry.clouddisk.service;
 
 import com.dinry.clouddisk.dao.FileContentMapper;
 import com.dinry.clouddisk.model.FileContent;
+import com.dinry.clouddisk.model.TFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -102,6 +103,11 @@ public class FileContentServiceImpl implements FileContentService {
             return fileContent;
         }
         return null;
+    }
+
+    @Override
+    public TFile getFileByFileContentId(int fileContentId) {
+        return fileContentMapper.getFileByFileContentId(fileContentId);
     }
 
 }

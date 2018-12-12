@@ -75,5 +75,15 @@ public class FileServiceImpl implements FileService {
         return tFileMapper.updateFileRes(fileId, res, res + 1, new Date());
     }
 
+    @Override
+    public TFile getEmptyFileByName(String filename) {
+        Example example = new Example(TFile.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("name", filename);
+        criteria.andEqualTo("size", "0");
+        criteria.andEqualTo("isDelete", false);
+        return tFileMapper.selectOneByExample(example);
+    }
+
 
 }

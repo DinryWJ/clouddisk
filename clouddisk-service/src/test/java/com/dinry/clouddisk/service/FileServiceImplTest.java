@@ -1,6 +1,7 @@
 package com.dinry.clouddisk.service;
 
 import com.dinry.clouddisk.ClouddiskServiceApplicationTests;
+import com.dinry.clouddisk.model.TFile;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,5 +18,9 @@ public class FileServiceImplTest extends ClouddiskServiceApplicationTests {
     @Test
     public void decreaseFileRes() {
 
+    }
+
+    @Test
+    public void getEmptyFileByName() {
     }
 }

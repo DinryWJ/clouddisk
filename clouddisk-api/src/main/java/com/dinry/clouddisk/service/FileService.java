@@ -65,4 +65,12 @@ public interface FileService {
      * @return
      */
     int addFileRes(int fileId);
+
+    /**
+     * 空文件判断
+     *
+     * @param filename
+     * @return
+     */
+    TFile getEmptyFileByName(String filename);
 }

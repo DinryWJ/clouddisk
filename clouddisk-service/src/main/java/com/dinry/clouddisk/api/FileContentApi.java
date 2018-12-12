@@ -3,6 +3,7 @@ package com.dinry.clouddisk.api;
 import com.dinry.clouddisk.common.FileSizeUtil;
 import com.dinry.clouddisk.common.MimeTypeUtil;
 import com.dinry.clouddisk.dto.FileContentInfo;
+import com.dinry.clouddisk.dto.FileInfo;
 import com.dinry.clouddisk.dto.LoginInfo;
 import com.dinry.clouddisk.model.Content;
 import com.dinry.clouddisk.model.FileContent;
@@ -18,15 +19,19 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @Author: 吴佳杰
@@ -78,6 +83,78 @@ public class FileContentApi {
         return ApiResponse.successResponse(eff);
     }
 
+    @ApiOperation(value = "下载文件")
+    @PostMapping("/downloadFiles")
+    public void downloadFiles(
+            @ApiParam(value = "文件id列表", required = true, example = "0") @RequestBody List<FileContentInfo> fileContentInfoList, HttpServletResponse response
+    ) {
+        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        if (fileContentInfoList.size() > 1 || fileContentInfoList.get(0).getIsFolder()) {
+            //多文件或单文件夹打包下载
+            List<FileInfo> fileInfos = new ArrayList<>(16);
+            for (FileContentInfo fileContentInfo : fileContentInfoList) {
+                if (fileContentInfo.getIsFolder()) {
+                    handleFiles("", fileContentInfo.getId(), fileInfos, info.getUserId());
+                } else {
+                    TFile tFile = fileContentService.getFileByFileContentId(fileContentInfo.getId());
+                    fileInfos.add(new FileInfo(fileContentInfo.getName(), tFile.getPath(), ""));
+                }
+            }
+            response.reset();
+            response.setContentType("APPLICATION/OCTET-STREAM");
+            try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream());ServletOutputStream outputStream = response.getOutputStream()) {
+                // 读入需要下载的文件的内容，打包到zip文件
+                response.addHeader("Content-Disposition", "filename=" + "download-" + LocalDateTime.now() + ".zip");
+                response.addHeader("Content-Length", "");
+                for (FileInfo fileInfo : fileInfos) {
+                    out.putNextEntry(new ZipEntry(fileInfo.getRelativePath() + fileInfo.getName()));
+                    out.write(Files.readAllBytes(Paths.get(fileInfo.getPath())));
+                    out.closeEntry();
+                }
+                out.close();
+                outputStream.println();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (fileContentInfoList.size() == 1){
+            //单文件下载
+            try(ServletOutputStream out = response.getOutputStream()) {
+                response.reset();
+                response.setHeader("Content-Type","application/octet-stream");
+                response.addHeader("Content-Disposition", "filename=" + fileContentInfoList.get(0).getName());
+                response.addHeader("Content-Length", "");
+                TFile tFile = fileContentService.getFileByFileContentId(fileContentInfoList.get(0).getId());
+                out.write(Files.readAllBytes(Paths.get(tFile.getPath())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    /**
+     * 获取准备压缩的文件信息
+     *
+     * @param prefixPath
+     * @param contentId
+     * @param fileInfos
+     * @param userId
+     * @return
+     */
+    private void handleFiles(String prefixPath, Integer contentId, List<FileInfo> fileInfos, Integer userId) {
+        prefixPath = prefixPath + contentService.getContentById(contentId).getName() + "/";
+        //获取目录下所有的文件
+        List<FileInfo> fileInfoList = contentService.getFileInfoByContentId(contentId);
+        for (FileInfo fileInfo : fileInfoList) {
+            fileInfos.add(new FileInfo(fileInfo.getName(), fileInfo.getPath(), prefixPath));
+        }
+        List<Content> contentList = contentService.getContent(contentId, userId);
+        for (Content content : contentList) {
+            handleFiles(prefixPath, content.getId(), fileInfos, userId);
+        }
+    }
+
     @ApiOperation(value = "批量删除文件")
     @PostMapping("/batchDeleteFiles")
     public ResponseEntity<ApiResponse> batchDeleteFiles(
@@ -108,6 +185,11 @@ public class FileContentApi {
         return ApiResponse.errorResponse("0");
     }
 
+    /**
+     * 删除单个文件
+     *
+     * @param id
+     */
     private void deleteFileById(int id) {
         if (id != 0) {
             TFile tFile = fileService.getById(id);
@@ -128,7 +210,12 @@ public class FileContentApi {
         }
     }
 
-
+    /**
+     * 递归删除文件夹及下面的所有文件
+     *
+     * @param id
+     * @param userId
+     */
     private void deleteFolderById(int id, int userId) {
         contentService.deleteContent(id, userId);
         List<FileContent> fileContents = fileContentService.getFilesByFolderId(id, userId);

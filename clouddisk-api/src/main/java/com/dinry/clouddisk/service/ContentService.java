@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.service;
 
+import com.dinry.clouddisk.dto.FileInfo;
 import com.dinry.clouddisk.model.Content;
 
 import java.util.List;
@@ -11,7 +12,15 @@ import java.util.List;
  */
 public interface ContentService {
     /**
-     * 获取目录
+     * 获取目录信息
+     *
+     * @param contentId
+     * @return
+     */
+    Content getContentById(int contentId);
+
+    /**
+     * 获取文件夹下的所有目录
      *
      * @param parentId
      * @return
@@ -44,4 +53,13 @@ public interface ContentService {
      * @return
      */
     int saveContent(String name,int parentId, Integer userId);
+
+
+    /**
+     * 获取目录下的所有文件信息
+     *
+     * @param contentId
+     * @return
+     */
+    List<FileInfo> getFileInfoByContentId(int contentId);
 }
