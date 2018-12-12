@@ -16,6 +16,6 @@ public class FileServiceImplTest extends ClouddiskServiceApplicationTests {
     private FileService fileService;
     @Test
     public void decreaseFileRes() {
-        Assert.assertEquals(fileService.decreaseFileRes(94, 2), 1);
+
     }
 }

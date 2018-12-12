@@ -2,7 +2,9 @@ package com.dinry.clouddisk.api;
 
 import com.dinry.clouddisk.common.FileSizeUtil;
 import com.dinry.clouddisk.common.MimeTypeUtil;
+import com.dinry.clouddisk.dto.FileContentInfo;
 import com.dinry.clouddisk.dto.LoginInfo;
+import com.dinry.clouddisk.model.Content;
 import com.dinry.clouddisk.model.FileContent;
 import com.dinry.clouddisk.model.TFile;
 import com.dinry.clouddisk.service.ContentService;
@@ -16,15 +18,14 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -77,57 +78,67 @@ public class FileContentApi {
         return ApiResponse.successResponse(eff);
     }
 
-    @ApiOperation(value = "删除文件")
-    @PostMapping(value = "/deleteFile")
-    public ResponseEntity<ApiResponse> deleteFile(
-            @ApiParam(value = "文件id", required = true, example = "0") @RequestParam(value = "fileContentId", required = true) int fileContentId
-    ) {
-        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
-        FileContent fileContent = fileContentService.getFileContentById(fileContentId, info.getUserId());
-        if (fileContent != null) {
-            int effectedNum = fileContentService.deleteContentFile(fileContentId, info.getUserId());
-            deleteFileById(fileContent);
-            return ApiResponse.successResponse(effectedNum);
-        }
-        return ApiResponse.errorResponse("删除失败，请刷新重试");
-    }
-
     @ApiOperation(value = "批量删除文件")
     @PostMapping("/batchDeleteFiles")
     public ResponseEntity<ApiResponse> batchDeleteFiles(
-            @ApiParam(value = "文件id列表", required = true, example = "0") @RequestParam(value = "fileContentIds", required = true) int[] fileContentIds
+            @ApiParam(value = "文件id列表", required = true, example = "0") @RequestBody List<FileContentInfo> fileContentInfoList
     ) {
+        long start = System.currentTimeMillis();
         LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
         FileContent fileContent;
         int effectedNum = 0;
-        for (int fileContentId : fileContentIds){
-            fileContent = fileContentService.getFileContentById(fileContentId, info.getUserId());
-            if (fileContent != null) {
-                effectedNum += fileContentService.deleteContentFile(fileContentId, info.getUserId());
-                deleteFileById(fileContent);
+        for (FileContentInfo fileContentInfo : fileContentInfoList) {
+            System.out.println(fileContentInfo);
+            if (fileContentInfo.getIsFolder()) {
+                effectedNum++;
+                deleteFolderById(fileContentInfo.getId(), info.getUserId());
+            } else {
+                fileContent = fileContentService.getFileContentById(fileContentInfo.getId(), info.getUserId());
+                if (fileContent != null) {
+                    effectedNum += fileContentService.deleteContentFile(fileContentInfo.getId(), info.getUserId());
+                    deleteFileById(fileContent.getFileId());
+                }
             }
         }
-        if (effectedNum == fileContentIds.length){
-            return ApiResponse.successResponse(effectedNum);
+        long end = System.currentTimeMillis();
+        System.out.println("删除用时:" + (end - start) + "ms");
+        if (effectedNum == fileContentInfoList.size()) {
+            return ApiResponse.successResponse("1");
         }
-        return ApiResponse.errorResponse(String.valueOf(effectedNum));
+        return ApiResponse.errorResponse("0");
     }
 
-    private void deleteFileById(FileContent fileContent) {
-        if (fileContent.getFileId() != 0) {
-            TFile tFile = fileService.getById(fileContent.getFileId());
+    private void deleteFileById(int id) {
+        if (id != 0) {
+            TFile tFile = fileService.getById(id);
             int eff = 0;
-            if (tFile.getId() != 0 && tFile.getRes() > 1) {
-                eff = fileService.decreaseFileRes(tFile.getId(), tFile.getRes());
-            }
-            if (tFile.getId() != 0 && tFile.getRes() == 1) {
-                try {
-                    Files.delete(Paths.get(tFile.getPath()));
-                } catch (IOException e) {
-                    log.error("文件删除失败:" + e.getMessage());
+            if (tFile != null) {
+                if (tFile.getId() != 0 && tFile.getRes() > 1) {
+                    eff = fileService.decreaseFileRes(tFile.getId(), tFile.getRes());
                 }
-                eff = fileService.deleteFile(tFile.getId(), tFile.getRes());
+                if (tFile.getId() != 0 && tFile.getRes() == 1) {
+                    try {
+                        Files.delete(Paths.get(tFile.getPath()));
+                    } catch (IOException e) {
+                        log.error("文件删除失败:" + e.getMessage());
+                    }
+                    eff = fileService.deleteFile(tFile.getId(), tFile.getRes());
+                }
             }
+        }
+    }
+
+
+    private void deleteFolderById(int id, int userId) {
+        contentService.deleteContent(id, userId);
+        List<FileContent> fileContents = fileContentService.getFilesByFolderId(id, userId);
+        for (FileContent fileContent : fileContents) {
+            fileContentService.deleteContentFile(fileContent.getId(), userId);
+            deleteFileById(fileContent.getFileId());
+        }
+        List<Content> contentList = contentService.getContent(id, userId);
+        for (Content content : contentList) {
+            deleteFolderById(content.getId(), userId);
         }
     }
 }

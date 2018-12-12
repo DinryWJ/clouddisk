@@ -41,7 +41,7 @@ public interface FileContentService {
     List<FileContent> getFilesByFolderId(int folderId, int userId);
 
     /**
-     * 删除文件目录表下的文件
+     * 删除文件目录表下的某个文件
      *
      * @param fileContentId
      * @param userId
