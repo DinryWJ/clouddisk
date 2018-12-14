@@ -89,6 +89,8 @@ public class FileContentApi {
             @ApiParam(value = "文件id列表", required = true, example = "0") @RequestBody List<FileContentInfo> fileContentInfoList, HttpServletResponse response
     ) {
         LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        response.reset();
+        response.setContentType("APPLICATION/OCTET-STREAM");
         if (fileContentInfoList.size() > 1 || fileContentInfoList.get(0).getIsFolder()) {
             //多文件或单文件夹打包下载
             List<FileInfo> fileInfos = new ArrayList<>(16);
@@ -100,8 +102,6 @@ public class FileContentApi {
                     fileInfos.add(new FileInfo(fileContentInfo.getName(), tFile.getPath(), ""));
                 }
             }
-            response.reset();
-            response.setContentType("APPLICATION/OCTET-STREAM");
             try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream());ServletOutputStream outputStream = response.getOutputStream()) {
                 // 读入需要下载的文件的内容，打包到zip文件
                 response.addHeader("Content-Disposition", "filename=" + "download-" + LocalDateTime.now() + ".zip");
@@ -120,8 +120,6 @@ public class FileContentApi {
         if (fileContentInfoList.size() == 1){
             //单文件下载
             try(ServletOutputStream out = response.getOutputStream()) {
-                response.reset();
-                response.setHeader("Content-Type","application/octet-stream");
                 response.addHeader("Content-Disposition", "filename=" + fileContentInfoList.get(0).getName());
                 response.addHeader("Content-Length", "");
                 TFile tFile = fileContentService.getFileByFileContentId(fileContentInfoList.get(0).getId());
