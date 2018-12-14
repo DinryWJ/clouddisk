@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.service;
 
+import com.dinry.clouddisk.dto.FileInfo;
 import com.dinry.clouddisk.model.FileContent;
 import com.dinry.clouddisk.model.TFile;
 
@@ -65,5 +66,14 @@ public interface FileContentService {
      * @return
      */
     TFile getFileByFileContentId(int fileContentId);
+
+    /**
+     * 获取文件信息
+     *
+     * @param fileContentId id
+     * @param userId
+     * @return FileInfo
+     */
+    FileInfo getFileInfo(int fileContentId, Integer userId);
 
 }

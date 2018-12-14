@@ -13,7 +13,6 @@ public class FileInfo {
     private String name;
     private String path;
     private String relativePath;
-    private Long size;
 
     public FileInfo() {
     }

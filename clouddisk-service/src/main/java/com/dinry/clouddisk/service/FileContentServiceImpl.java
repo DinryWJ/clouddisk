@@ -1,6 +1,7 @@
 package com.dinry.clouddisk.service;
 
 import com.dinry.clouddisk.dao.FileContentMapper;
+import com.dinry.clouddisk.dto.FileInfo;
 import com.dinry.clouddisk.model.FileContent;
 import com.dinry.clouddisk.model.TFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +109,11 @@ public class FileContentServiceImpl implements FileContentService {
     @Override
     public TFile getFileByFileContentId(int fileContentId) {
         return fileContentMapper.getFileByFileContentId(fileContentId);
+    }
+
+    @Override
+    public FileInfo getFileInfo(int fileContentId, Integer userId) {
+        return fileContentMapper.getFileInfo(fileContentId, userId);
     }
 
 }

@@ -84,50 +84,68 @@ public class FileContentApi {
     }
 
     @ApiOperation(value = "下载文件")
-    @PostMapping("/downloadFiles")
+    @GetMapping("/downloadFiles")
     public void downloadFiles(
-            @ApiParam(value = "文件id列表", required = true, example = "0") @RequestBody List<FileContentInfo> fileContentInfoList, HttpServletResponse response
+            @ApiParam(value = "文件列表", required = false, example = "0") @RequestParam(value = "fs", required = false) List<Integer> fileList,
+            @ApiParam(value = "目录列表", required = false, example = "0") @RequestParam(value = "ds", required = false) List<Integer> dirList,
+            HttpServletResponse response
     ) {
         LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
-        response.reset();
-        response.setContentType("APPLICATION/OCTET-STREAM");
-        if (fileContentInfoList.size() > 1 || fileContentInfoList.get(0).getIsFolder()) {
+        if (info == null) {
+            return;
+        }
+        if ((fileList != null && fileList.size() > 1) || (dirList != null && dirList.size() > 0)) {
             //多文件或单文件夹打包下载
             List<FileInfo> fileInfos = new ArrayList<>(16);
-            for (FileContentInfo fileContentInfo : fileContentInfoList) {
-                if (fileContentInfo.getIsFolder()) {
-                    handleFiles("", fileContentInfo.getId(), fileInfos, info.getUserId());
-                } else {
-                    TFile tFile = fileContentService.getFileByFileContentId(fileContentInfo.getId());
-                    fileInfos.add(new FileInfo(fileContentInfo.getName(), tFile.getPath(), ""));
+            if (dirList != null) {
+                for (Integer i : dirList) {
+                    handleFiles("", i, fileInfos, info.getUserId());
                 }
             }
-            try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream());ServletOutputStream outputStream = response.getOutputStream()) {
-                // 读入需要下载的文件的内容，打包到zip文件
-                response.addHeader("Content-Disposition", "filename=" + "download-" + LocalDateTime.now() + ".zip");
-                response.addHeader("Content-Length", "");
-                for (FileInfo fileInfo : fileInfos) {
-                    out.putNextEntry(new ZipEntry(fileInfo.getRelativePath() + fileInfo.getName()));
-                    out.write(Files.readAllBytes(Paths.get(fileInfo.getPath())));
-                    out.closeEntry();
+            if (fileList != null) {
+                for (Integer i : fileList) {
+                    FileInfo fileInfo = fileContentService.getFileInfo(i, info.getUserId());
+                    fileInfo.setRelativePath("");
+                    fileInfos.add(fileInfo);
                 }
-                out.close();
-                outputStream.println();
-            } catch (Exception e) {
-                e.printStackTrace();
+            }
+            if (fileInfos.size() != 0) {
+                response.reset();
+                response.setContentType("APPLICATION/OCTET-STREAM");
+                response.setHeader("Access-Control-Allow-Origin","*");
+                response.setHeader("Access-Control-Allow-Methods","*");
+                try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()); ServletOutputStream outputStream = response.getOutputStream()) {
+                    // 读入需要下载的文件的内容，打包到zip文件
+                    response.addHeader("Content-Disposition", "filename=" + "download-" + LocalDateTime.now() + ".zip");
+                    response.addHeader("Content-Length", "");
+                    for (FileInfo fileInfo : fileInfos) {
+                        out.putNextEntry(new ZipEntry(fileInfo.getRelativePath() + fileInfo.getName()));
+                        out.write(Files.readAllBytes(Paths.get(fileInfo.getPath())));
+                        out.closeEntry();
+                    }
+                    out.close();
+                    outputStream.println();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
-        if (fileContentInfoList.size() == 1){
+        if (fileList != null && fileList.size() == 1) {
             //单文件下载
-            try(ServletOutputStream out = response.getOutputStream()) {
-                response.addHeader("Content-Disposition", "filename=" + fileContentInfoList.get(0).getName());
-                response.addHeader("Content-Length", "");
-                TFile tFile = fileContentService.getFileByFileContentId(fileContentInfoList.get(0).getId());
-                out.write(Files.readAllBytes(Paths.get(tFile.getPath())));
-            } catch (IOException e) {
-                e.printStackTrace();
+            FileInfo fileInfo = fileContentService.getFileInfo(fileList.get(0), info.getUserId());
+            if (fileInfo != null) {
+                response.reset();
+                response.setContentType("APPLICATION/OCTET-STREAM");
+                response.setHeader("Access-Control-Allow-Origin","*");
+                response.setHeader("Access-Control-Allow-Methods","*");
+                try (ServletOutputStream out = response.getOutputStream()) {
+                    response.addHeader("Content-Disposition", "filename=" + fileInfo.getName());
+                    response.addHeader("Content-Length", "");
+                    out.write(Files.readAllBytes(Paths.get(fileInfo.getPath())));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
         }
     }
 

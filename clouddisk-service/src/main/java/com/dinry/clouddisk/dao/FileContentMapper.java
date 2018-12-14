@@ -1,6 +1,7 @@
 package com.dinry.clouddisk.dao;
 
 import com.dinry.clouddisk.config.MyMapper;
+import com.dinry.clouddisk.dto.FileInfo;
 import com.dinry.clouddisk.model.FileContent;
 import com.dinry.clouddisk.model.TFile;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +32,14 @@ public interface FileContentMapper extends MyMapper<FileContent> {
      */
     @Select("SELECT file.* FROM file,file_content WHERE file_content.id = #{fileContentId} AND file_content.file_id = file.id")
     TFile getFileByFileContentId(@Param("fileContentId") int fileContentId);
+
+    /**
+     * 获取文件信息
+     *
+     * @param fileContentId
+     * @param userId
+     * @return
+     */
+    @Select("SELECT file.id,file_content.`name`,file.path FROM file,file_content WHERE file_content.id = #{fileContentId} AND file_content.user_id = #{userId} AND file_content.file_id = file.id")
+    FileInfo getFileInfo(@Param("fileContentId") int fileContentId,@Param("userId") Integer userId);
 }
