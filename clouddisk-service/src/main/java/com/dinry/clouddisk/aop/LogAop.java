@@ -23,11 +23,11 @@ import java.util.Optional;
 @Component
 public class LogAop {
 
-    @Pointcut("execution(* com.dinry.clouddisk.api.*.*(..)) && !execution(* com.dinry.clouddisk.api.FileContentApi.downloadFiles(..))")
+    @Pointcut("execution(public * com.dinry.clouddisk.api.*.*(..)) && !execution(* com.dinry.clouddisk.api.FileContentApi.downloadFiles(..))")
     public void pointCut() {
     }
 
-    @Pointcut("execution(* com.dinry.clouddisk.api.FileContentApi.downloadFiles(..))")
+    @Pointcut("execution(public * com.dinry.clouddisk.api.FileContentApi.downloadFiles(..))")
     public void downloadPointCut() {
     }
 
