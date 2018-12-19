@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -21,35 +22,28 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 @Aspect
+@Component
 public class LogAop {
 
     @Pointcut("execution(* com.dinry.clouddisk.api.*.*(..))")
-    public void pointCut(){
-    };
+    public void pointCut() {
+    }
 
     @Before(value = "pointCut()")
     public void before(JoinPoint joinPoint) throws JsonProcessingException {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-
-        StringBuffer requestLog = new StringBuffer();
-        requestLog.append("请求信息：")
-                .append("URL = {" + request.getRequestURI() + "},\t")
-                .append("HTTP_METHOD = {" + request.getMethod() + "},\t")
-                .append("IP = {" + request.getRemoteAddr() + "},\t")
-                .append("CLASS_METHOD = {" + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName() + "},\t");
-
-        if(joinPoint.getArgs().length == 0) {
-            requestLog.append("ARGS = {} ");
+        log.info("<=======================");
+        log.info("<<<方法  " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+        if (joinPoint.getArgs().length == 0) {
+            log.info("<<<参数  null ");
         } else {
-            requestLog.append("ARGS = " + new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                    .writeValueAsString(joinPoint.getArgs()[0]) + "");
+            log.info("<<<参数  " + new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                    .writeValueAsString(joinPoint.getArgs()));
         }
-        log.info(requestLog.toString());
     }
 
-    @AfterReturning(pointcut = "pointCut()",returning = "object")
-    public void after(Object object){
-        log.info(object.toString());
+    @AfterReturning(pointcut = "pointCut()", returning = "object")
+    public void after(Object object) {
+        log.info(">>>返回 " + object.toString());
+        log.info("=======================>");
     }
 }
