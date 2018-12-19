@@ -10,10 +10,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * @Author: 吴佳杰
@@ -25,8 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class LogAop {
 
-    @Pointcut("execution(* com.dinry.clouddisk.api.*.*(..))")
+    @Pointcut("execution(* com.dinry.clouddisk.api.*.*(..)) && !execution(* com.dinry.clouddisk.api.FileContentApi.downloadFiles(..))")
     public void pointCut() {
+    }
+
+    @Pointcut("execution(* com.dinry.clouddisk.api.FileContentApi.downloadFiles(..))")
+    public void downloadPointCut() {
     }
 
     @Before(value = "pointCut()")
@@ -37,13 +39,32 @@ public class LogAop {
             log.info("<<<参数  null ");
         } else {
             log.info("<<<参数  " + new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                    .writeValueAsString(joinPoint.getArgs()));
+                    .writeValueAsString(joinPoint.getArgs()[0]));
         }
     }
 
+    @Before(value = "downloadPointCut()")
+    public void downloadBefore(JoinPoint joinPoint) throws JsonProcessingException {
+        log.info("<=======================");
+        log.info("<<<方法  " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+        if (joinPoint.getArgs().length == 0) {
+            log.info("<<<参数  null ");
+        } else {
+            log.info("<<<参数  " + new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                    .writeValueAsString(joinPoint.getArgs()[0]));
+        }
+    }
+
+
     @AfterReturning(pointcut = "pointCut()", returning = "object")
     public void after(Object object) {
-        log.info(">>>返回 " + object.toString());
+        log.info(">>>返回 " + Optional.of(object.toString()).orElse(""));
+        log.info("=======================>");
+    }
+
+    @AfterReturning(pointcut = "downloadPointCut()")
+    public void after() {
+        log.info(">>>返回 ");
         log.info("=======================>");
     }
 }
