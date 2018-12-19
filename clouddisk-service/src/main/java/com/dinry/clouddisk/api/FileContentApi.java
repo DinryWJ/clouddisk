@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.api;
 
+import com.dinry.clouddisk.ApiResponse;
 import com.dinry.clouddisk.common.FileSizeUtil;
 import com.dinry.clouddisk.common.MimeTypeUtil;
 import com.dinry.clouddisk.dto.FileContentInfo;

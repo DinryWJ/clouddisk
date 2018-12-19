@@ -1,5 +1,6 @@
 package com.dinry.clouddisk.api;
 
+import com.dinry.clouddisk.ApiResponse;
 import com.dinry.clouddisk.dto.LoginInfo;
 import com.dinry.clouddisk.model.Content;
 import com.dinry.clouddisk.model.FileContent;

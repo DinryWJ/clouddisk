@@ -1,4 +1,4 @@
-package com.dinry.clouddisk.api;
+package com.dinry.clouddisk;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

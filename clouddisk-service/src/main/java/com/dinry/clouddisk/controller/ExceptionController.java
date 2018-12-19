@@ -1,6 +1,6 @@
 package com.dinry.clouddisk.controller;
 
-import com.dinry.clouddisk.api.ApiResponse;
+import com.dinry.clouddisk.ApiResponse;
 import com.dinry.clouddisk.exception.UnauthorizedException;
 import org.apache.shiro.ShiroException;
 import org.springframework.http.HttpStatus;
