@@ -116,4 +116,9 @@ public class FileContentServiceImpl implements FileContentService {
         return fileContentMapper.getFileInfo(fileContentId, userId);
     }
 
+    @Override
+    public int renameFile(int fileId, String name, Integer userId) {
+        return fileContentMapper.renameFile(fileId, name, userId, new Date());
+    }
+
 }

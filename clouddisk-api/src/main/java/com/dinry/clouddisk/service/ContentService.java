@@ -52,7 +52,7 @@ public interface ContentService {
      * @param userId
      * @return
      */
-    int saveContent(String name,int parentId, Integer userId);
+    int saveContent(String name, int parentId, Integer userId);
 
 
     /**
@@ -62,4 +62,14 @@ public interface ContentService {
      * @return
      */
     List<FileInfo> getFileInfoByContentId(int contentId);
+
+    /**
+     * 重命名文件夹
+     *
+     * @param contentId id
+     * @param name      新名字
+     * @param userId
+     * @return
+     */
+    int renameDirectory(int contentId, String name, Integer userId);
 }

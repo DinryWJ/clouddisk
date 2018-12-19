@@ -70,4 +70,15 @@ public class ContentApi {
         int eff = contentService.deleteContent(contentId, info.getUserId());
         return ApiResponse.successResponse(eff);
     }
+
+    @ApiOperation(value = "重命名文件夹")
+    @PostMapping(value = "/renameDirectory")
+    public ResponseEntity<ApiResponse> renameDirectory(
+            @ApiParam(value = "文件Id", required = true, example = "0") @RequestParam(value = "contentId", required = true) int contentId,
+            @ApiParam(value = "文件名", required = true) @RequestParam(value = "name", required = true) String name
+    ) {
+        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        int eff = contentService.renameDirectory(contentId, name, info.getUserId());
+        return ApiResponse.successResponse(eff);
+    }
 }

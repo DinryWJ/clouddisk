@@ -76,4 +76,13 @@ public interface FileContentService {
      */
     FileInfo getFileInfo(int fileContentId, Integer userId);
 
+    /**
+     * 重命名文件
+     *
+     * @param fileId id
+     * @param name   name
+     * @param userId userid
+     * @return
+     */
+    int renameFile(int fileId, String name, Integer userId);
 }

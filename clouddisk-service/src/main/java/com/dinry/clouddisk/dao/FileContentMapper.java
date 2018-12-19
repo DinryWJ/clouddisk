@@ -6,7 +6,9 @@ import com.dinry.clouddisk.model.FileContent;
 import com.dinry.clouddisk.model.TFile;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,5 +43,17 @@ public interface FileContentMapper extends MyMapper<FileContent> {
      * @return
      */
     @Select("SELECT file.id,file_content.`name`,file.path FROM file,file_content WHERE file_content.id = #{fileContentId} AND file_content.user_id = #{userId} AND file_content.file_id = file.id")
-    FileInfo getFileInfo(@Param("fileContentId") int fileContentId,@Param("userId") Integer userId);
+    FileInfo getFileInfo(@Param("fileContentId") int fileContentId, @Param("userId") Integer userId);
+
+    /**
+     * 重命名文件
+     *
+     * @param fileId
+     * @param name
+     * @param userId
+     * @param date
+     * @return
+     */
+    @Update("UPDATE file_content SET `name` = #{name},`update_time`= #{date} WHERE user_id = #{userId} AND id = #{fileId}")
+    int renameFile(@Param("fileId") int fileId, @Param("name") String name, @Param("userId") Integer userId, @Param("date") Date date);
 }

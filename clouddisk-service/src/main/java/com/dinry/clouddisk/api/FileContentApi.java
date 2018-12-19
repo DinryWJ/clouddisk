@@ -60,6 +60,17 @@ public class FileContentApi {
         this.fileService = fileService;
     }
 
+    @ApiOperation(value = "重命名文件")
+    @PostMapping(value = "/renameFile")
+    public ResponseEntity<ApiResponse> renameFile(
+            @ApiParam(value = "文件id", required = true, example = "0") @RequestParam(value = "fileId", required = true) int fileId,
+            @ApiParam(value = "文件名", required = true) @RequestParam(value = "name", required = true) String name
+    ){
+        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        int eff = fileContentService.renameFile(fileId, name, info.getUserId());
+        return ApiResponse.successResponse(eff);
+    }
+
 
     @ApiOperation(value = "保存文件至文件目录中")
     @PostMapping(value = "/saveFileToContent")

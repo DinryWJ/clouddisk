@@ -70,7 +70,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public int saveContent(String name,int parentId, Integer userId) {
+    public int saveContent(String name, int parentId, Integer userId) {
         Content content = new Content();
         content.setUserId(userId);
         content.setName(name);
@@ -83,5 +83,10 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public List<FileInfo> getFileInfoByContentId(int contentId) {
         return contentMapper.getFileInfoByContentId(contentId);
+    }
+
+    @Override
+    public int renameDirectory(int contentId, String name, Integer userId) {
+        return contentMapper.renameDirectory(contentId, name, userId, new Date());
     }
 }
