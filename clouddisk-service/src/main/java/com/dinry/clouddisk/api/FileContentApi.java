@@ -112,6 +112,7 @@ public class FileContentApi {
             if (fileInfos.size() != 0) {
                 response.reset();
                 response.setContentType("APPLICATION/OCTET-STREAM");
+                response.setHeader("Access-Control-Expose-Headers","Content-Disposition,Content-Length");
                 response.setHeader("Access-Control-Allow-Origin","*");
                 response.setHeader("Access-Control-Allow-Methods","*");
                 try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()); ServletOutputStream outputStream = response.getOutputStream()) {
@@ -136,6 +137,7 @@ public class FileContentApi {
             if (fileInfo != null) {
                 response.reset();
                 response.setContentType("APPLICATION/OCTET-STREAM");
+                response.setHeader("Access-Control-Expose-Headers","Content-Disposition,Content-Length");
                 response.setHeader("Access-Control-Allow-Origin","*");
                 response.setHeader("Access-Control-Allow-Methods","*");
                 try (ServletOutputStream out = response.getOutputStream()) {
