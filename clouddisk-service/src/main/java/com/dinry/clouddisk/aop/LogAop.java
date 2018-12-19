@@ -27,7 +27,7 @@ public class LogAop {
     public void pointCut() {
     }
 
-    @Pointcut("execution(public * com.dinry.clouddisk.api.FileContentApi.downloadFiles(..))")
+    @Pointcut("execution(* com.dinry.clouddisk.api.FileContentApi.downloadFiles(..))")
     public void downloadPointCut() {
     }
 

@@ -131,6 +131,7 @@ public class FileContentApi {
                     e.printStackTrace();
                 }
             }
+            return;
         }
         if (fileList != null && fileList.size() == 1) {
             //单文件下载
