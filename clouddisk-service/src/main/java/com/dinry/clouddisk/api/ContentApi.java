@@ -51,14 +51,17 @@ public class ContentApi {
     }
 
     @ApiOperation(value = "新建文件夹")
-    @PostMapping(value = "/saveFolder")
-    public ResponseEntity<ApiResponse> saveFolder(
+    @PostMapping(value = "/newFolder")
+    public ResponseEntity<ApiResponse> newFolder(
             @ApiParam(value = "上级目录id", required = true, example = "0") @RequestParam(value = "parentId", required = true) int parentId,
             @ApiParam(value = "文件名", required = true) @RequestParam(value = "name", required = true) String name
     ) {
         LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
-        int eff = contentService.saveContent(name, parentId, info.getUserId());
-        return ApiResponse.successResponse(eff);
+        int id = contentService.saveContent(name, parentId, info.getUserId());
+        if (id > 0) {
+            return ApiResponse.successResponse(id);
+        }
+        return ApiResponse.successResponse(-1);
     }
 
     @ApiOperation(value = "删除文件夹")

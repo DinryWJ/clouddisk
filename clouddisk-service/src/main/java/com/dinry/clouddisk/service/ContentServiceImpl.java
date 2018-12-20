@@ -77,7 +77,11 @@ public class ContentServiceImpl implements ContentService {
         content.setParentId(parentId);
         content.setUpdateTime(new Date());
         content.setCreateTime(new Date());
-        return contentMapper.insert(content);
+        int eff = contentMapper.insert(content);
+        if (eff>0){
+            return content.getId();
+        }
+        return -1;
     }
 
     @Override
