@@ -50,6 +50,18 @@ public class ContentApi {
         return ApiResponse.successResponse(resultMap);
     }
 
+    @ApiOperation(value = "获取目录")
+    @GetMapping(value = "/getDirectory")
+    public ResponseEntity<ApiResponse> getDirectory(
+            @ApiParam(value = "上级目录id", required = true, example = "0") @RequestParam(value = "parentId", required = true) int parentId
+    ) {
+        LoginInfo info = (LoginInfo) SecurityUtils.getSubject().getPrincipal();
+        List<Content> contentList = contentService.getContent(parentId, info.getUserId());
+        Map<String, List> resultMap = new HashMap<>(16);
+        resultMap.put("contents", contentList);
+        return ApiResponse.successResponse(resultMap);
+    }
+
     @ApiOperation(value = "新建文件夹")
     @PostMapping(value = "/newFolder")
     public ResponseEntity<ApiResponse> newFolder(
